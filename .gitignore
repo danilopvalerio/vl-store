@@ -1,0 +1,18 @@
+# Node.js dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment variables
+.env
+
+# MacOS specific
+.DS_Store
+
+# Ignore package-lock.json 
+package-lock.json
+
+# Vue.js specific
+public/
