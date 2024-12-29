@@ -18,12 +18,13 @@
 .barra-pesquisa-container {
   display: flex;
   justify-content: center;
-  margin: 20px 0;
   width: 90%;
+  height: 40px;
 }
 
 .barra-pesquisa {
   width: 50%;
+  height: 100%;
   padding: 10px;
   border-radius: 30px;
   font-size: 13px;
@@ -39,6 +40,9 @@
 }
 
 .btn {
+  white-space: nowrap;
+  width: auto;
+  height: 100%;
   padding: 10px 20px;
   margin-left: 10px;
   border: none;

@@ -1,14 +1,12 @@
 <template>
   <div class="container-det">
-    <header>
-      <button @click="$emit('fechar')">❌</button>
-    </header>
     <div class="text-block">
       <h2>{{ produto.titulo }}</h2>
     </div>
     <div class="main-data-group">
       <label>Categoria: {{ produto.categoria }}</label>
       <label>Material: {{ produto.material }}</label>
+      <label>Total geral em estoque: {{ contaTotal }}</label>
     </div>
     <div class="text-block-smaller">
       <h3>Variações do produto</h3>
@@ -26,14 +24,16 @@
       </div>
     </div>
     <footer>
+      <button @click="$emit('fechar')">Fechar</button>
       <button @click="deletarProduto">Deletar</button>
-      <button>Salvar</button>
+      <button @click="$emit('editar')">Editar</button>
     </footer>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import { corSelect } from "@/controllers/themeController";
 
 export default {
   name: "DetailedProduct",
@@ -54,7 +54,7 @@ export default {
       }),
     },
     temaNum: {
-      type: Object,
+      type: Number,
       required: true,
     },
   },
@@ -79,6 +79,18 @@ export default {
         alert("Erro ao deletar o produto. Tente novamente.");
       }
     },
+    cores(tema, cor) {
+      return corSelect(tema, cor);
+    },
+  },
+  computed: {
+    contaTotal() {
+      // Soma as quantidades de todas as variações
+      return this.produto.variacoes.reduce(
+        (total, variacao) => total + variacao.quantidade,
+        0
+      );
+    },
   },
 };
 </script>
@@ -91,57 +103,43 @@ export default {
 }
 /* container-det principal */
 .container-det {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+
   background-color: rgba(193, 193, 193, 0.164);
   backdrop-filter: blur(15px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.578);
   width: 100%;
+  height: 80%;
+
   max-width: 600px;
   margin: 0 auto;
   border-radius: 40px 40px 10px 10px;
-  height: auto;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-bottom: 20px;
-}
-.text-block {
-  background-color: #363f4e;
-  width: 90%;
-  border-radius: 20px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px auto;
-}
-
-.text-block-smaller{
-  background-color: #363f4e;
-  width: 50%;
-  border-radius: 20px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 20px auto;
 }
 
 /* Estilo dos títulos */
 h2,
 h3 {
-  width: 95%;
+  width: auto;
   font-size: 19px;
-  color: #ffffff;
+  color: v-bind(cores(tema,4));
   text-align: center;
 }
 header {
-  background-color: #363f4e;
+  background-color: v-bind(cores(tema,4));
   width: 100%;
   height: 50px;
   border-radius: 40px 40px 0px 0px;
   display: flex;
-  justify-content: end;
+  justify-content: center;
   align-items: center;
 }
 
@@ -149,7 +147,7 @@ header {
 .main-data-group label,
 .variacao-item label {
   font-size: 15px;
-  color: #000000;
+  color: v-bind(cores(tema,2));
   display: block;
   margin: 5px 0;
 }
@@ -161,24 +159,26 @@ header {
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.245);
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.411);
   margin-bottom: 20px;
 }
 .variacao-container-det {
+  background-color: none;
   width: 95%;
   height: 300px;
   max-height: 400px;
   overflow-y: scroll;
   scroll-padding: 10px;
+  border-radius: 10px;
 }
 
 .variacao-container-det::-webkit-scrollbar {
   width: 10px;
-  background-color: #363f4e;
+  background-color: v-bind(cores(tema,4));
   border-radius: 10px;
 }
 .variacao-container-det::-webkit-scrollbar-thumb {
-  background-color: white;
+  background-color: v-bind(cores(tema,0));
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -189,18 +189,18 @@ header {
   flex-direction: column;
   justify-content: center;
   align-items: left;
-  background-color: rgba(255, 255, 255, 0.245);
+  background-color: rgba(255, 255, 255, 0.753);
   height: 120px;
   border-radius: 15px;
   box-shadow: 2px 2px 4px rgba(103, 103, 103, 0.307);
 }
 
 .variacao-item:hover {
-  background-color: #e2e2e2;
+  background-color: v-bind(cores(tema,1));
 }
 
 header button {
-  background-color: white;
+  background-color: v-bind(cores(tema,0));
   width: 30px;
   height: 30px;
   border-radius: 50px;
@@ -217,25 +217,21 @@ footer {
   display: flex;
   justify-content: space-between;
   padding: 0px 20px;
+  margin: 10px;
 }
 footer button {
-  background-color: #363f4e;
   color: #ffffff;
-  width: auto;
-  height: 30px;
-  padding: 15px;
-  border-radius: 50px;
+  background-color: v-bind(cores(tema,4));
+  padding: 10px 20px;
   border: none;
-  font-size: 14px;
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 2px 2px 4px rgba(103, 103, 103, 0.307);
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  box-sizing: border-box; /* Garante que a borda fique dentro do botão */
 }
 footer button:hover {
   cursor: pointer;
-  background-color: #363f4e;
-  color: white;
+  background-color: v-bind(cores(tema,0));
+  color: v-bind(cores(tema,4));
 }
 </style>

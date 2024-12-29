@@ -1,86 +1,69 @@
 <template>
   <div class="container">
-    <HeaderPanel :temaNum="this.tema" />
+    <HeaderPanel :temaNum="tema" />
     <h1>Produtos</h1>
-    <!-- <FooterPanel :paleta="tema" /> -->
+    <div
+      class="overlay"
+      v-if="exibirFormulario || exibicaoDetalhada"
+      @click="fecharJanelas"
+    ></div>
     <SearchBar
-      :temaNum="this.tema"
+      :temaNum="tema"
       @pesquisar="pesquisarProduto"
       @mostrarFormulario="mostrarFormulario"
       @limparPesquisa="limparPesquisa"
     />
-    <!-- Referência para poder acessar os métodos deste componente (ref)-->
+
     <ProductTable
       ref="productTable"
-      :temaNum="this.tema"
-      @exibir-detalhes="abrirProdutoDetalhado"
+      :temaNum="tema"
+      @exibir-detalhes="abrirDetalhes"
     />
 
-    <div
-      class="overlay"
-      v-if="exibirFormulario || exibicaoDetalhada"
-      @click="mostrarFormulario"
-    ></div>
-    <div class="pop-up" v-if="exibirFormulario">
-      <ProductForm :temaNum="this.tema" @fechar="fecharPopUp" />
-    </div>
+    <ProductForm
+      v-if="exibirFormulario"
+      :temaNum="tema"
+      @fechar="fecharJanelas"
+    />
 
-    <div class="pop-up" v-if="exibicaoDetalhada">
-      <DetailedProduct
-        ref="detailedProduct"
-        v-if="exibicaoDetalhada"
-        :produto="produtoSelecionado"
-        @fechar="fecharDetalhes"
-        :temaNum="this.tema"
-        @produto-deletado="atualizarTabela"
-      />
-    </div>
+    <DetailedProduct
+      ref="detailedProduct"
+      v-if="exibicaoDetalhada"
+      :produto="produtoSelecionado"
+      @fechar="fecharJanelas"
+      :temaNum="tema"
+      @produto-deletado="atualizarTabela"
+    />
+    <FooterPanel :paleta="tema" :temaNum="tema" />
   </div>
 </template>
 
 <style scoped>
-
-
 .container {
   background-color: v-bind(cores(tema, 0));
   display: flex;
-  justify-content: start;
   align-items: center;
   flex-direction: column;
+  justify-content: space-between;
   width: 100%;
-  font-family: "Arial", sans-serif;
-  height: 100%;
+  height: 100vh;
 }
 
 h1 {
-  color: v-bind(cores(tema, 3));
+  color: v-bind(cores(tema, 2));
   text-align: center;
   margin-bottom: 20px;
 }
 
 .overlay {
-  background-color: rgba(255, 255, 255, 0.419);
+  background-color: rgba(193, 193, 193, 0.164);
+  backdrop-filter: blur(15px);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 1000;
-}
-
-.pop-up {
-  width: 100%;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1001;
-  padding: 20px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: none;
 }
 </style>
 
@@ -91,28 +74,24 @@ import SearchBar from "./SearchBar.vue";
 import { corSelect } from "./../controllers/themeController.js";
 import HeaderPanel from "./common/HeaderPanel.vue";
 import DetailedProduct from "./DetailedProduct.vue";
-// import FooterPanel from "./common/FooterPanel.vue";
+import FooterPanel from "./common/FooterPanel.vue";
 
 export default {
   name: "ProdutoTable",
   data() {
     return {
+      tema: this.temaNum,
       produtos: [],
       paginaAtual: 1,
       itensPorPagina: 5,
-      pesquisa: "", // Variável para pesquisa
-      pesquisaSubmit: "", // Variável que será utilizada na função de pesquisa
+      pesquisa: "",
+      pesquisaSubmit: "",
       exibirFormulario: false,
       exibicaoDetalhada: false,
       produtoSelecionado: null,
-      //Branco, preto, azul acinzentado escuro
-      //verde claro//
     };
   },
   methods: {
-    mostrarFormulario() {
-      this.exibirFormulario = !this.exibirFormulario;
-    },
     cores(tema, cor) {
       return corSelect(tema, cor);
     },
@@ -127,31 +106,36 @@ export default {
     limparPesquisa() {
       this.$refs.productTable.limparPesquisa();
     },
-    atualizarTabela(){
+    atualizarTabela() {
       this.$refs.productTable.atualizar();
     },
     fecharPopUp() {
       this.mostrarFormulario();
     },
-    abrirProdutoDetalhado(produto) {
+    abrirDetalhes(produto) {
       this.produtoSelecionado = produto;
       this.exibicaoDetalhada = true;
     },
-    fecharDetalhes() {
+    fecharJanelas() {
       this.exibicaoDetalhada = false;
+      this.exibirFormulario = false;
       this.produtoSelecionado = null;
+    },
+    mostrarFormulario() {
+      this.exibicaoDetalhada = false;
+      this.exibirFormulario = true;
     },
   },
   components: {
     ProductForm,
     ProductTable,
     HeaderPanel,
-    // FooterPanel,
+    FooterPanel,
     SearchBar,
     DetailedProduct,
   },
   props: {
-    tema: {
+    temaNum: {
       type: Number,
       required: true,
     },

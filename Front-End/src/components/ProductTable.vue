@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="table-pagination-container">
     <div class="table-wrapper">
       <table id="responsive-table">
         <thead>
@@ -48,13 +48,18 @@
 * {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.288); /* Sombra no texto */
 }
-
+.table-pagination-container{
+  width: 100%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 .table-wrapper {
   background-color: v-bind(cores(tema, 0));
   margin: 0 auto;
   height: 280px;
   width: 100%;
-  margin-bottom: 20px;
   width: 90%;
 }
 
@@ -67,6 +72,8 @@ table {
 
 th,
 td {
+  
+  font-weight: 500;
   text-align: center;
   padding: 8px;
   font-size: 13px;
@@ -87,7 +94,7 @@ th {
   border-radius: 40px;
   font-weight: 500;
   background-color: v-bind(cores(tema, 6));
-  color: v-bind(cores(tema, 3));
+  color: v-bind(cores(tema, 4));
 }
 
 th:hover {
@@ -97,7 +104,7 @@ th:hover {
 
 .linha {
   background-color: v-bind(cores(tema, 1));
-  color: v-bind(cores(tema, 3));
+  color: v-bind(cores(tema, 4));
 }
 
 .linha:hover {
@@ -125,7 +132,7 @@ th:hover {
   font-size: 16px;
   cursor: pointer;
   border: none;
-  border-radius: 15px;
+  border-radius: 20px;
   transition: background-color 0.3s;
 }
 
