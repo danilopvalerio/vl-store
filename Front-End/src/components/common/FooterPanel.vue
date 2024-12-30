@@ -9,7 +9,7 @@
   background-color: v-bind(cores(tema, 4));
   box-sizing: border-box;
   width: 100%;
-  height: 80px; /* Altura fixa do painel */
+  height: 55px; /* Altura fixa do painel */
   padding: 0 20px; /* Ajuste de espaçamento nas laterais */
   display: flex;
   justify-content: center; /* Centraliza o conteúdo horizontalmente */

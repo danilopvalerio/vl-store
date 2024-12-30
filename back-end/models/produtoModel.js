@@ -34,6 +34,10 @@ const produtoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  genero: {
+    type: String,
+    required: true,
+  },
   variacoes: [variacaoSchema],
 });
 

@@ -1,45 +1,56 @@
 <template>
   <div class="container-det">
-    <div class="text-block">
-      <h2>{{ produto.titulo }}</h2>
-    </div>
-    <div class="main-data-group">
-      <label>Categoria: {{ produto.categoria }}</label>
-      <label>Material: {{ produto.material }}</label>
-      <label>Total geral em estoque: {{ contaTotal }}</label>
-    </div>
-    <div class="text-block-smaller">
-      <h3>Variações do produto</h3>
-    </div>
-    <div class="variacao-container-det">
-      <div
-        v-for="(variacao, index) in produto.variacoes"
-        :key="index"
-        class="variacao-item"
-      >
-        <label>Cor: {{ variacao.cor }}</label>
-        <label>Tamanho: {{ variacao.tamanho }}</label>
-        <label>Quantidade: {{ variacao.quantidade }}</label>
-        <label>Valor: {{ variacao.valor }}</label>
+    <ProductForm
+      v-if="mostrarEditar"
+      :produtoEditar="produto"
+      :temaNum="tema"
+      @fechar="fecharEditar"
+    />
+    <div v-if="!mostrarEditar" class="sub-container-det">
+      <div class="text-block">
+        <h2>{{ produto.titulo + ' - ' + produto.genero }}</h2>
       </div>
+      <div class="main-data-group">
+        <label>Categoria: {{ produto.categoria }}</label>
+        <label>Material: {{ produto.material }}</label>
+        <label>Total geral em estoque: {{ contaTotal }}</label>
+      </div>
+      <div class="text-block-smaller">
+        <h3>Variações do produto</h3>
+      </div>
+      <div class="variacao-container-det">
+        <div
+          v-for="(variacao, index) in produto.variacoes"
+          :key="index"
+          class="variacao-item"
+        >
+          <label>Cor: {{ variacao.cor }}</label>
+          <label>Tamanho: {{ variacao.tamanho }}</label>
+          <label>Quantidade: {{ variacao.quantidade }}</label>
+          <label>Valor: {{ variacao.valor }}</label>
+        </div>
+      </div>
+      <footer>
+        <button @click="$emit('fechar')">Fechar</button>
+        <button @click="deletarProduto">Deletar</button>
+        <button @click="exibirEditar">Editar</button>
+      </footer>
     </div>
-    <footer>
-      <button @click="$emit('fechar')">Fechar</button>
-      <button @click="deletarProduto">Deletar</button>
-      <button @click="$emit('editar')">Editar</button>
-    </footer>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import { corSelect } from "@/controllers/themeController";
+import ProductForm from "./ProductForm.vue";
 
 export default {
   name: "DetailedProduct",
   data() {
     return {
+      showEditar: false,
       tema: this.temaNum,
+      mostrarEditar: false,
     };
   },
   props: {
@@ -50,6 +61,7 @@ export default {
         titulo: "",
         categoria: "",
         material: "",
+        genero: "",
         variacoes: [],
       }),
     },
@@ -82,6 +94,12 @@ export default {
     cores(tema, cor) {
       return corSelect(tema, cor);
     },
+    fecharEditar() {
+      this.mostrarEditar = false;
+    },
+    exibirEditar() {
+      this.mostrarEditar = true;
+    },
   },
   computed: {
     contaTotal() {
@@ -91,6 +109,9 @@ export default {
         0
       );
     },
+  },
+  components: {
+    ProductForm,
   },
 };
 </script>
@@ -108,17 +129,24 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
-
-  background-color: rgba(193, 193, 193, 0.164);
-  backdrop-filter: blur(15px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.578);
   width: 100%;
   height: 80%;
-
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
-  border-radius: 40px 40px 10px 10px;
 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.sub-container-det {
+  background-color: v-bind(cores(tema, 8));
+  backdrop-filter: blur(15px);
+  box-shadow: 0 4px 15px v-bind(cores(tema, 17));
+  border-radius: 40px 40px 10px 10px;
+  color: v-bind(cores(tema, 2));
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -130,11 +158,11 @@ h2,
 h3 {
   width: auto;
   font-size: 19px;
-  color: v-bind(cores(tema,4));
+  color: v-bind(cores(tema, 7));
   text-align: center;
 }
 header {
-  background-color: v-bind(cores(tema,4));
+  background-color: v-bind(cores(tema, 4));
   width: 100%;
   height: 50px;
   border-radius: 40px 40px 0px 0px;
@@ -147,7 +175,7 @@ header {
 .main-data-group label,
 .variacao-item label {
   font-size: 15px;
-  color: v-bind(cores(tema,2));
+  color: v-bind(cores(tema, 2));
   display: block;
   margin: 5px 0;
 }
@@ -157,9 +185,9 @@ header {
   margin: 20px 0px 2p;
   width: 90%;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.245);
+  background-color: v-bind(cores(tema, 18));
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.411);
+  box-shadow: 0 4px 10px v-bind(cores(tema, 17));
   margin-bottom: 20px;
 }
 .variacao-container-det {
@@ -174,13 +202,13 @@ header {
 
 .variacao-container-det::-webkit-scrollbar {
   width: 10px;
-  background-color: v-bind(cores(tema,4));
+  background-color: v-bind(cores(tema, 4));
   border-radius: 10px;
 }
 .variacao-container-det::-webkit-scrollbar-thumb {
-  background-color: v-bind(cores(tema,0));
+  background-color: v-bind(cores(tema, 0));
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 15px;
 }
 .variacao-item {
   margin: 10px 10px 10px 15px;
@@ -189,29 +217,16 @@ header {
   flex-direction: column;
   justify-content: center;
   align-items: left;
-  background-color: rgba(255, 255, 255, 0.753);
+  background-color: v-bind(cores(tema, 18));
   height: 120px;
   border-radius: 15px;
-  box-shadow: 2px 2px 4px rgba(103, 103, 103, 0.307);
+  box-shadow: 2px 2px 4px v-bind(cores(tema, 17));
 }
 
 .variacao-item:hover {
-  background-color: v-bind(cores(tema,1));
+  background-color: v-bind(cores(tema, 19));
 }
 
-header button {
-  background-color: v-bind(cores(tema,0));
-  width: 30px;
-  height: 30px;
-  border-radius: 50px;
-  border: none;
-  font-size: 14px;
-  margin: 20px;
-}
-header button:hover {
-  cursor: pointer;
-  background-color: #dddddd;
-}
 footer {
   width: 100%;
   display: flex;
@@ -220,8 +235,9 @@ footer {
   margin: 10px;
 }
 footer button {
-  color: #ffffff;
-  background-color: v-bind(cores(tema,4));
+  color: v-bind(cores(tema, 20));
+  height: 40px;
+  background-color: v-bind(cores(tema, 4));
   padding: 10px 20px;
   border: none;
   border-radius: 30px;
@@ -231,7 +247,8 @@ footer button {
 }
 footer button:hover {
   cursor: pointer;
-  background-color: v-bind(cores(tema,0));
-  color: v-bind(cores(tema,4));
+  background-color: v-bind(cores(tema, 9));
+  color: v-bind(cores(tema, 4));
+  box-shadow: 2px 2px 4px v-bind(cores(tema, 17)); /* Sombra no texto */
 }
 </style>

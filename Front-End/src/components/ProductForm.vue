@@ -3,7 +3,7 @@
     <div class="text-block">
       <h2>Cadastro de Produto</h2>
     </div>
-    <form @submit.prevent="salvarProduto">
+    <form>
       <div class="form-group">
         <label>Título:</label>
         <input
@@ -64,6 +64,7 @@
               type="text"
               name="cor"
               required
+              placeholder="Digite a cor..."
             />
           </div>
 
@@ -75,6 +76,7 @@
               type="text"
               name="tamanho"
               required
+              placeholder="Tamanho..."
             />
           </div>
 
@@ -87,6 +89,7 @@
               name="quantidade"
               required
               min="1"
+              placeholder="01"
             />
           </div>
 
@@ -98,8 +101,8 @@
               type="number"
               name="valor"
               required
-              min="0.01"
-              step="0.01"
+              min="1"
+              step="1"
             />
           </div>
 
@@ -128,6 +131,7 @@ export default {
   data() {
     return {
       tema: this.temaNum,
+      editar: false,
       produto: {
         titulo: "",
         categoria: "",
@@ -144,10 +148,20 @@ export default {
       },
     };
   },
+  created() {
+    if (this.produtoEditar != null) {
+      this.editar = true;
+      this.produto = this.produtoEditar;
+    }
+  },
   props: {
     temaNum: {
       type: Number,
       required: true,
+    },
+    produtoEditar: {
+      type: Number,
+      required: false,
     },
   },
   methods: {
@@ -168,23 +182,40 @@ export default {
       this.produto.variacoes.splice(index, 1);
     },
     salvarProduto() {
-      // Concatenando o gênero com o título
-      this.produto.titulo = `${this.produto.titulo} - ${this.produto.genero}`;
+      if (this.editar) {
+        this.editarProduto();
+      } else {
+        axios
+          .post("http://localhost:5000/api/produtos/", this.produto)
+          .then((response) => {
+            alert("Produto criado com sucesso:", response.data);
+          })
+          .catch((error) => {
+            alert("Erro ao criar o produto:", error);
+          });
 
+        this.fecharFormulario();
+      }
+    },
+    editarProduto() {
+      console.log(this.produto._id);
       axios
-        .post("http://localhost:5000/api/produtos/", this.produto)
+        .put(
+          `http://localhost:5000/api/produtos/${this.produto._id}`,
+          this.produto
+        )
         .then((response) => {
-          alert("Produto criado com sucesso:", response.data);
+          alert("Produto editado com sucesso:", response.data);
         })
         .catch((error) => {
-          alert("Erro ao criar o produto:", error);
+          alert("Erro ao editar o produto:", error);
         });
 
-      this.fecharFormulario();
+      this.fecharFormulario(this.produto);
     },
-    fecharFormulario() {
+    fecharFormulario(produtoFinal) {
       this.limparEntradas();
-      this.$emit("fechar");
+      this.$emit("fechar", produtoFinal);
     },
     limparEntradas() {
       this.produto = {
@@ -217,22 +248,25 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
-
+  color: v-bind(cores(tema, 2));
   height: 580px;
-  width: 70%;
+  width: 100%;
   max-width: 700px;
   padding: 0px 0px 5px 0px;
-  background-color: rgba(193, 193, 193, 0.164);
+  background-color: v-bind(cores(tema, 8));
   backdrop-filter: blur(15px);
   border-radius: 40px 40px 10px 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.578);
- 
+  box-shadow: 0 4px 15px v-bind(cores(tema, 17));
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-content: space-around;
 }
-
+input,
+select {
+  color: v-bind(cores(tema, 2));
+}
 form {
   padding: 0px 10px;
   border-radius: 10px;
@@ -242,7 +276,7 @@ form {
 h2,
 h3 {
   font-size: 18px;
-  color: v-bind(cores(tema, 4));
+  color: v-bind(cores(tema, 2));
   text-align: center;
 }
 
@@ -271,17 +305,17 @@ select {
   border: none;
   background-color: v-bind(cores(tema, 1));
   border-radius: 15px;
-  border: 1px solid v-bind(cores(tema, 6));
+  border: 1px solid v-bind(cores(tema, 222));
   padding: 5px 10px;
   width: 60%;
-  box-shadow: 2px 2px 4px rgba(103, 103, 103, 0.307); /* Sombra no texto */
+  box-shadow: 2px 2px 4px v-bind(cores(tema, 22));
 }
 
 .variacao-container {
   width: 100%;
   height: 250px;
   overflow-y: scroll;
-  border: 1px solid v-bind(cores(tema, 6));
+  border: 1px solid v-bind(cores(tema, 13));
   border-radius: 4px;
 }
 
@@ -330,9 +364,9 @@ select {
   border: none;
   background-color: v-bind(cores(tema, 1));
   border-radius: 15px;
-  border: 1px solid v-bind(cores(tema, 6));
+  border: 1px solid v-bind(cores(tema, 22));
   padding: 5px;
-  box-shadow: 2px 2px 4px rgba(103, 103, 103, 0.307);
+  box-shadow: 2px 2px 4px v-bind(cores(tema, 22));
   text-align: center;
 }
 
@@ -354,6 +388,7 @@ select {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding: 5px 15px;
   font-size: 18px; /* Tamanho do 'X' */
   transition: background-color 0.3s ease; /* Efeito de transição suave na cor de fundo */
   margin-right: 10px;
@@ -364,7 +399,7 @@ select {
 }
 
 .variacao-item button:focus {
-  outline: none; /* Remove a borda de foco padrão */
+  outline: none;
 }
 
 .form-close-save {
@@ -375,7 +410,7 @@ select {
   margin-top: 20px;
 }
 .form-close-save button {
-  color: v-bind(cores(tema, 0));
+  color: v-bind(cores(tema, 20));
   background-color: v-bind(cores(tema, 4));
   padding: 10px 20px;
   border: none;
@@ -386,9 +421,10 @@ select {
 }
 
 .form-close-save button:hover {
-  color: v-bind(cores(tema, 0));
-  background-color: v-bind(cores(tema, 6));
-  box-sizing: border-box;
+  cursor: pointer;
+  background-color: v-bind(cores(tema, 0));
+  color: v-bind(cores(tema, 4));
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307); /* Sombra no texto */
 }
 @media (max-width: 600px) {
   .variacao-item input {

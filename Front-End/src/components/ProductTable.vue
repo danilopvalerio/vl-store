@@ -23,7 +23,7 @@
         </tbody>
       </table>
     </div>
-
+    Páginação
     <div class="pagination">
       <button
         @click="mudarPagina(paginaAtual - 1)"
@@ -45,21 +45,20 @@
 </template>
 
 <style scoped>
-* {
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.288); /* Sombra no texto */
-}
-.table-pagination-container{
+
+.table-pagination-container {
   width: 100%;
   height: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  color: v-bind(cores(tema, 3));
 }
 .table-wrapper {
   background-color: v-bind(cores(tema, 0));
   margin: 0 auto;
   height: 280px;
-  width: 100%;
   width: 90%;
 }
 
@@ -72,8 +71,6 @@ table {
 
 th,
 td {
-  
-  font-weight: 500;
   text-align: center;
   padding: 8px;
   font-size: 13px;
@@ -81,7 +78,7 @@ td {
   text-overflow: ellipsis; /* Adicionando '...' quando o texto for muito grande */
   white-space: nowrap; /* Impedindo a quebra de linha do texto */
   border-radius: 25px;
-  box-shadow: 2px 2px 4px rgba(103, 103, 103, 0.307); /* Sombra no texto */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.319); /* Sombra no texto */
 }
 .size1 {
   width: 50%;
@@ -92,25 +89,23 @@ td {
 
 th {
   border-radius: 40px;
-  font-weight: 500;
   background-color: v-bind(cores(tema, 6));
-  color: v-bind(cores(tema, 4));
+  color: v-bind(cores(tema, 14));
 }
 
 th:hover {
-  background-color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(tema, 11));
   color: v-bind(cores(tema, 0));
 }
 
 .linha {
-  background-color: v-bind(cores(tema, 1));
-  color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(tema, 10));
+  color: v-bind(cores(tema, 15));
 }
 
 .linha:hover {
-  background-color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(tema, 11));
   color: v-bind(cores(tema, 0));
-  font-weight: 500;
   cursor: pointer;
 }
 
@@ -121,129 +116,146 @@ th:hover {
   margin-top: 20px;
 }
 #pagination-num {
-  color: v-bind(cores(tema, 4));
+  color: v-bind(cores(tema, 3));
+  text-align: center;
+  margin: 8px;
 }
 
 .pagination button {
-  background-color: v-bind(cores(tema, 4));
-  color: v-bind(cores(tema, 0));;
-  padding: 8px 16px;
-  margin: 0 10px;
-  font-size: 16px;
-  cursor: pointer;
+  white-space: nowrap;
+  width: auto;
+  height: 40px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 20px;
+  border-radius: 30px;
+  cursor: pointer;
   transition: background-color 0.3s;
+  font-size: 13;
+  background-color: v-bind(cores(tema, 3));
+  color: v-bind(cores(tema, 9));
 }
 
-.pagination button:hover{
-  background-color: v-bind(cores(tema, 0));
+.pagination button:hover {
+  background-color: v-bind(cores(tema, 21));
   color: v-bind(cores(tema, 4));
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307); /* Sombra no texto */
 }
-</style>      
+</style>
 
 <script>
+import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { corSelect } from "./../controllers/themeController.js";
 
 export default {
   name: "ProdutoTable",
-  data() {
-    return {
-      produtos: [],
-      paginaAtual: 1,
-      itensPorPagina: 5,
-      pesquisa: "", // Variável para pesquisa
-      pesquisaSubmit: "", // Variável que será utilizada na função de pesquisa
-      produtoSelecionado: null,
-      tema: this.temaNum,
-    };
-  },
-  computed: {
-    totalPaginas() {
-      return Math.ceil(this.produtos.length / this.itensPorPagina);
-    },
-    produtosPaginados() {
-      const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
-      const fim = inicio + this.itensPorPagina;
-      return this.produtos.slice(inicio, fim);
-    },
-    produtosFiltrados() {
-      if (!this.pesquisaSubmit) {
-        return this.produtosPaginados;
-      }
-      const termoPesquisa = this.pesquisaSubmit.toLowerCase();
-      return this.produtos.filter((produto) => {
-        return (
-          produto.titulo.toLowerCase().includes(termoPesquisa) ||
-          produto.categoria.toLowerCase().includes(termoPesquisa) ||
-          produto.material.toLowerCase().includes(termoPesquisa) ||
-          produto.cor_variacao?.toLowerCase().includes(termoPesquisa) ||
-          produto.tamanho?.toLowerCase().includes(termoPesquisa)
-        );
-      });
-    },
-  },
-  mounted() {
-    this.obterProdutos();
-  },
-  methods: {
-    selecionarProduto(produto) {
-      this.produtoSelecionado = produto;
-    },
-    cores(tema, cor) {
-      return corSelect(tema, cor);
-    },
-    mostrarFormulario() {
-      this.exibirFormulario = !this.exibirFormulario;
-    },
-    async obterProdutos() {
-      await axios
-        .get("http://localhost:5000/api/produtos")
-        .then((response) => {
-          this.produtos = response.data;
-        })
-        .catch((error) => {
-          console.error("Erro ao obter produtos:", error);
-        });
-    },
-    mudarPagina(pagina) {
-      if (pagina >= 1 && pagina <= this.totalPaginas) {
-        this.paginaAtual = pagina;
-      }
-    },
-    pesquisarProduto(e) {
-      this.pesquisaSubmit = e;
-      this.paginaAtual = 1; // Resetar para a primeira página ao pesquisar
-    },
-    limparPesquisa() {
-      this.pesquisa = ""; // Limpar o campo de entrada
-      this.pesquisaSubmit = ""; // Resetar a pesquisa ativa
-      this.paginaAtual = 1; // Retornar à primeira página
-    },
-    fecharPopUp() {
-      this.mostrarFormulario();
-    },
-    exibirDetalhes(produto) {
-      this.$emit("exibir-detalhes", produto);
-    },
-    atualizar() {
-      // Resetar as variáveis de estado
-      this.produtos = [];
-      this.pesquisa = "";
-      this.pesquisaSubmit = "";
-      this.paginaAtual = 1;
-
-      // Reobter os produtos
-      this.obterProdutos();
-    },
-  },
   props: {
     temaNum: {
       type: Number,
       required: true,
     },
+  },
+  setup(props, { emit }) {
+    // States reativos
+    const produtos = ref([]);
+    const paginaAtual = ref(1);
+    const itensPorPagina = ref(5);
+    const pesquisa = ref("");
+    const pesquisaSubmit = ref("");
+    const produtoSelecionado = ref(null);
+    const tema = ref(props.temaNum);
+
+    // Métodos
+    const cores = (tema, cor) => corSelect(tema, cor);
+
+    const mudarPagina = (pagina) => {
+      if (pagina >= 1 && pagina <= totalPaginas.value) {
+        paginaAtual.value = pagina;
+      }
+    };
+
+    const pesquisarProduto = (e) => {
+      pesquisaSubmit.value = e;
+      paginaAtual.value = 1; // Resetar para a primeira página ao pesquisar
+    };
+
+    const limparPesquisa = () => {
+      pesquisa.value = "";
+      pesquisaSubmit.value = "";
+      paginaAtual.value = 1; // Retornar à primeira página
+    };
+
+    const exibirDetalhes = (produto) => {
+      emit("exibir-detalhes", produto);
+    };
+
+    const obterProdutos = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/produtos");
+        produtos.value = response.data;
+      } catch (error) {
+        console.error("Erro ao obter produtos:", error);
+      }
+    };
+
+    const atualizar = () => {
+      produtos.value = [];
+      pesquisa.value = "";
+      pesquisaSubmit.value = "";
+      paginaAtual.value = 1;
+      obterProdutos();
+    };
+
+    // Computed properties
+    const totalPaginas = computed(() => {
+      return Math.ceil(produtos.value.length / itensPorPagina.value);
+    });
+
+    const produtosPaginados = computed(() => {
+      const inicio = (paginaAtual.value - 1) * itensPorPagina.value;
+      const fim = inicio + itensPorPagina.value;
+      return produtos.value.slice(inicio, fim);
+    });
+
+    const produtosFiltrados = computed(() => {
+      if (!pesquisaSubmit.value) {
+        return produtosPaginados.value;
+      }
+      const termoPesquisa = pesquisaSubmit.value.toLowerCase();
+      return produtos.value.filter((produto) => {
+        return (
+          produto.titulo?.toLowerCase().includes(termoPesquisa) ||
+          produto.categoria?.toLowerCase().includes(termoPesquisa) ||
+          produto.material?.toLowerCase().includes(termoPesquisa) ||
+          produto.cor_variacao?.toLowerCase().includes(termoPesquisa) ||
+          produto.tamanho?.toLowerCase().includes(termoPesquisa)
+        );
+      });
+    });
+
+    // Lifecycle hooks
+    onMounted(() => {
+      obterProdutos();
+    });
+
+    return {
+      produtos,
+      paginaAtual,
+      itensPorPagina,
+      pesquisa,
+      pesquisaSubmit,
+      produtoSelecionado,
+      tema,
+      totalPaginas,
+      produtosPaginados,
+      produtosFiltrados,
+      cores,
+      mudarPagina,
+      pesquisarProduto,
+      limparPesquisa,
+      exibirDetalhes,
+      atualizar,
+    };
   },
 };
 </script>

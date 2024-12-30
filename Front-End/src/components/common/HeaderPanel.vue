@@ -8,7 +8,7 @@
 .headerPanel {
   background-color: v-bind(cores(tema,4));
   width: 100%;
-  height: 80px; 
+  height: 60px; 
   display:flex;
   justify-content: center;
   align-items: center;

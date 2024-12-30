@@ -3,179 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Formulário de Produto</title>
+    <title>Editar Nome</title>
     <style>
-      * {
-        box-sizing: border-box;
-        font-family: "Montserrat", sans-serif;
-      }
-      /* Container principal */
       .container {
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-        border-radius: 40px 40px 10px 10px;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background-color: rgb(235, 235, 235);
-        padding-bottom: 20px;
-      }
-
-      /* Estilo dos títulos */
-      h2,
-      h3 {
-        width: 95%;
-        font-size: 1.5rem;
-        color: #333;
-        margin: 10px 10px 10px 30px;
-      }
-      header {
-        background-color: #1b1c2d;
-        width: 100%;
-        height: 50px;
-        border-radius: 40px 40px 0px 0px;
-        display: flex;
-        justify-content: end;
-        align-items: center;
-      }
-
-      /* Estilo dos rótulos */
-      label {
-        font-size: 15px;
-        color: #1b1c2d;
-        display: block;
-        margin: 5px 0;
-      }
-
-      /* Estilo do grupo de dados principais */
-      .main-data-group {
-        margin: 20px 0px 2p;
-        width: 90%;
-        padding: 20px;
-        background-color: rgb(255, 255, 255);
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-      }
-      .variacao-container {
-        width: 95%;
-        height: 300px;
-        max-height: 400px;
-        overflow-y: scroll;
-        scroll-padding: 10px;
-      }
-
-      .variacao-container::-webkit-scrollbar {
-        width: 10px;
-        background-color: none;
-        border-radius: 10px;
-      }
-      .variacao-container::-webkit-scrollbar-thumb {
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-      .variacao-item {
-        margin: 10px 10px 10px 15px;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: left;
-        background-color: #ffffff;
-        height: 120px;
-        border-radius: 15px;
-        box-shadow: 2px 2px 4px rgba(103, 103, 103, 0.307);
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.185);
-      }
-
-      .variacao-item:hover,
-      .variacao-item label:hover {
-        background-color: #e2e2e2;
-        color: #004a9a;
-      }
-
-      header button {
-        background-color: white;
-        width: 30px;
-        height: 30px;
-        border-radius: 50px;
-        border: none;
-        font-size: 14px;
         margin: 20px;
       }
-      header button:hover {
-        cursor: pointer;
-        background-color: #dddddd;
+      label {
+        font-size: 18px;
+        margin-right: 10px;
       }
-      footer {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        padding: 0px 20px;
-      }
-      footer button {
-        background-color: white;
-        width: auto;
-        height: 30px;
-        padding: 15px;
-        border-radius: 50px;
-        border: none;
-        font-size: 14px;
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 2px 2px 4px rgba(103, 103, 103, 0.307);
-      }
-      footer button:hover {
-        cursor: pointer;
-        background-color: #1b1c2d;
-        color: white;
+      input {
+        font-size: 18px;
+        margin-top: 10px;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <header>
-        <button @click="fecharJanela">❌</button>
-      </header>
-      <h2>Pijama da Hello Kitty</h2>
-      <div class="main-data-group">
-        <label for="categoria">Categoria: Roupa</label>
-        <label for="material">Material: Algodão e Poliéster</label>
-      </div>
-      <h3>Variações de Produto:</h3>
-      <div class="variacao-container">
-        <div class="variacao-item">
-          <label>Cor: Rosa turquesa e azul marinho</label>
-          <label>Tamanho: 14</label>
-          <label>Quantidade: 2500</label>
-          <label>Valor: R$200.00</label>
-        </div>
-
-        <div class="variacao-item">
-          <label>Cor: Rosa turquesa e azul marinho</label>
-          <label>Tamanho: 14</label>
-          <label>Quantidade: 2500</label>
-          <label>Valor: R$200.00</label>
-        </div>
-
-        <div class="variacao-item">
-          <label>Cor: Rosa turquesa e azul marinho</label>
-          <label>Tamanho: 14</label>
-          <label>Quantidade: 2500</label>
-          <label>Valor: R$200.00</label>
-        </div>
-      </div>
-
-      <footer>
-        <button>Deletar</button>
-        <button>Salvar</button>
-      </footer>
+      <label>Nome:</label>
+      <label id="labelNome">João</label>
+      <br /><br />
+      <button onclick="editar()">Editar</button>
+      <button onclick="salvar()">Salvar</button>
     </div>
+
+    <script>
+      let nomeAtual = "João";
+      let isEditando = false;
+
+      function editar() {
+        if (!isEditando) {
+          const label = document.getElementById("labelNome");
+          const nome = label.innerText;
+
+          label.innerHTML = `<input type="text" id="inputNome" value="${nome}">`;
+          isEditando = true;
+        }
+      }
+
+      function salvar() {
+        if (isEditando) {
+          const input = document.getElementById("inputNome");
+          nomeAtual = input.value;
+
+          // Atualiza a label com o nome editado
+          const label = document.getElementById("labelNome");
+          label.innerHTML = nomeAtual;
+          isEditando = false;
+        }
+      }
+    </script>
   </body>
 </html>
