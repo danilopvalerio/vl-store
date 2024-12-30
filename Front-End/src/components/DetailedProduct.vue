@@ -14,6 +14,7 @@
         <label>Categoria: {{ produto.categoria }}</label>
         <label>Material: {{ produto.material }}</label>
         <label>Total geral em estoque: {{ contaTotal }}</label>
+        <label>Referência do produto: {{ produto.ref }}</label>
       </div>
       <div class="text-block-smaller">
         <h3>Variações do produto</h3>
@@ -58,6 +59,7 @@ export default {
       type: Object,
       required: true,
       default: () => ({
+        ref: "",
         titulo: "",
         categoria: "",
         material: "",

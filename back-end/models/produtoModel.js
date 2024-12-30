@@ -22,6 +22,10 @@ const variacaoSchema = new mongoose.Schema({
 });
 
 const produtoSchema = new mongoose.Schema({
+  ref: {
+    type: String,
+    required: true,
+  },
   titulo: {
     type: String,
     required: true,

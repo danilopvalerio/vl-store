@@ -4,7 +4,8 @@ const {
     lerProdutos,
     atualizarProduto,
     removerProduto,
-    lerProdutoPorID
+    lerProdutoPorID,
+    verificaRef
 } = require('../controllers/produtoController');
 
 const router = express.Router();
@@ -16,5 +17,9 @@ router
     .put(atualizarProduto)
     .delete(removerProduto)
     .get(lerProdutoPorID);
+
+router
+.route('/verificaRef/:ref')
+.get(verificaRef);
 
 module.exports = router;

@@ -6,40 +6,25 @@
     <form>
       <div class="form-group">
         <label>Título:</label>
-        <input
-          v-model="produto.titulo"
-          type="text"
-          id="titulo"
-          name="titulo"
-          required
-          placeholder="Digite o título..."
-        />
+        <input v-model="produto.titulo" type="text" name="titulo" required placeholder="Digite o título..." />
       </div>
 
       <div class="form-group">
         <label>Categoria:</label>
-        <input
-          v-model="produto.categoria"
-          type="text"
-          id="categoria"
-          name="categoria"
-          required
-          placeholder="Digite a categoria..."
-        />
+        <input v-model="produto.categoria" type="text" name="categoria" required placeholder="Digite a categoria..." />
+
       </div>
 
       <div class="form-group">
         <label>Material:</label>
-        <input
-          v-model="produto.material"
-          type="text"
-          id="material"
-          name="material"
-          required
-          placeholder="Digite o material..."
-        />
-        <label>Gênero:</label>
-        <select v-model="produto.genero" id="genero" name="genero" required>
+        <input v-model="produto.material" type="text" name="material" required placeholder="Digite o material..." />
+      </div>
+      <div class="form-group">
+        <label>Referência:</label>
+        <label id="referencia">{{ produto.ref }}</label>
+
+        <label id="genero">Gênero:</label>
+        <select v-model="produto.genero" class="input-menor" name="genero" required>
           <option value="unissex">Unissex</option>
           <option value="masculino">Masculino</option>
           <option value="feminino">Feminino</option>
@@ -51,66 +36,30 @@
       </div>
 
       <div class="variacao-container">
-        <div
-          v-for="(variacao, index) in produto.variacoes"
-          :key="index"
-          class="variacao-item"
-        >
+        <div v-for="(variacao, index) in produto.variacoes" :key="index" class="variacao-item">
           <div class="variacao-item-entry size1">
             <label for="cor">Cor:</label>
-            <input
-              class="size3"
-              v-model="variacao.cor"
-              type="text"
-              name="cor"
-              required
-              placeholder="Digite a cor..."
-            />
+            <input class="size3" v-model="variacao.cor" type="text" name="cor" required placeholder="Digite a cor..." />
           </div>
 
           <div class="variacao-item-entry size3">
             <label for="tamanho">Tamanho:</label>
-            <input
-              class="size2"
-              v-model="variacao.tamanho"
-              type="text"
-              name="tamanho"
-              required
-              placeholder="Tamanho..."
-            />
+            <input class="size2" v-model="variacao.tamanho" type="text" name="tamanho" required
+              placeholder="Tamanho..." />
           </div>
 
           <div class="variacao-item-entry size2">
             <label for="quantidade">Quantidade</label>
-            <input
-              class="size1"
-              v-model="variacao.quantidade"
-              type="number"
-              name="quantidade"
-              required
-              min="1"
-              placeholder="01"
-            />
+            <input class="size1" v-model="variacao.quantidade" type="number" name="quantidade" required min="1"
+              placeholder="01" />
           </div>
 
           <div class="variacao-item-entry size2">
             <label for="valor">Valor</label>
-            <input
-              class="size1"
-              v-model="variacao.valor"
-              type="number"
-              name="valor"
-              required
-              min="1"
-              step="1"
-            />
+            <input class="size1" v-model="variacao.valor" type="number" name="valor" required min="1" step="1" />
           </div>
 
-          <button
-            :disabled="produto.variacoes.length === 1"
-            type="button"
-            @click="removerVariacao(index)"
-          >
+          <button :disabled="produto.variacoes.length === 1" type="button" @click="removerVariacao(index)">
             X
           </button>
         </div>
@@ -133,6 +82,7 @@ export default {
       tema: this.temaNum,
       editar: false,
       produto: {
+        ref: "",
         titulo: "",
         categoria: "",
         material: "",
@@ -152,6 +102,8 @@ export default {
     if (this.produtoEditar != null) {
       this.editar = true;
       this.produto = this.produtoEditar;
+    } else {
+      this.produto.ref = this.gerarReferenciaAleatoria();
     }
   },
   props: {
@@ -160,20 +112,47 @@ export default {
       required: true,
     },
     produtoEditar: {
-      type: Number,
+      type: Object,
       required: false,
     },
   },
   methods: {
     adicionarVariacao() {
       this.produto.variacoes.push({
-        ref: "",
         cor: "",
         tamanho: "",
         quantidade: 1,
         valor: 0.01,
         tema: this.temaNum,
       });
+    },
+    gerarReferenciaAleatoria() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    },
+    async verificarRefExistente(ref) {
+      try {
+        // Substitua a URL pela rota correta do seu backend para verificar as referências
+        const response = await axios.get(`http://localhost:5000/api/produtos/verificarRef/${ref}`);
+        return response.data.existe; // Supondo que a resposta retorna um booleano indicando se a referência existe
+      } catch (error) {
+        console.error("Erro ao verificar referência:", error);
+        return false; // Em caso de erro, presume-se que a referência não existe
+      }
+    },
+
+    async gerarReferenciaValida() {
+      let refValida = false;
+      let novaRef;
+
+      while (!refValida) {
+        novaRef = this.gerarReferenciaAleatoria();
+        const existe = await this.verificarRefExistente(novaRef);
+        if (!existe) {
+          refValida = true;
+        }
+      }
+
+      this.produto.ref = novaRef;
     },
     cores(tema, cor) {
       return corSelect(tema, cor);
@@ -188,10 +167,10 @@ export default {
         axios
           .post("http://localhost:5000/api/produtos/", this.produto)
           .then((response) => {
-            alert("Produto criado com sucesso:", response.data);
+            alert(`Produto criado com sucesso: ${response.data}`);
           })
           .catch((error) => {
-            alert("Erro ao criar o produto:", error);
+            alert(`Erro ao criar o produto: ${error}`);
           });
 
         this.fecharFormulario();
@@ -261,18 +240,25 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-content: space-around;
+  align-items: center;
 }
+
 input,
 select {
   color: v-bind(cores(tema, 2));
 }
+
 form {
   padding: 0px 10px;
   border-radius: 10px;
-  width: 100%;
+  width: 95%;
   height: 75%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
 }
+
 h2,
 h3 {
   font-size: 18px;
@@ -281,25 +267,29 @@ h3 {
 }
 
 .form-group {
+  box-sizing: border-box;
   height: 10%;
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   height: 40px;
 }
 
 .form-group label {
-  width: 17%;
+  min-width: 15%;
+  width: 15%;
   text-align: right;
   height: 80%;
   display: flex;
   align-items: center;
-  justify-content: end;
+  justify-content: start;
   margin-right: 20px;
 }
+
 .form-group input,
-select {
+select,
+#referencia {
   outline: none;
   height: 30px;
   border: none;
@@ -307,8 +297,24 @@ select {
   border-radius: 15px;
   border: 1px solid v-bind(cores(tema, 222));
   padding: 5px 10px;
-  width: 60%;
   box-shadow: 2px 2px 4px v-bind(cores(tema, 22));
+}
+
+.form-group input {
+  width: 85%;
+}
+
+#referencia {
+  width: 30%;
+}
+
+#genero {
+  min-width: 10%;
+  width: 5%;
+}
+
+select {
+  width: 15%;
 }
 
 .variacao-container {
@@ -324,6 +330,7 @@ select {
   background-color: white;
   border-radius: 10px;
 }
+
 .variacao-container::-webkit-scrollbar-thumb {
   background-color: #363f4e;
   border-radius: 10px;
@@ -343,15 +350,19 @@ select {
   flex-direction: column;
   margin: 5px;
 }
+
 .size1 {
   width: 50%;
 }
+
 .size2 {
   width: 15%;
 }
+
 .size3 {
   width: 20%;
 }
+
 .variacao-item-entry label {
   font-size: 13px;
   margin-bottom: 10px;
@@ -370,27 +381,27 @@ select {
   text-align: center;
 }
 
-#material,
-select {
-  width: 30%;
-}
-select {
-  width: 20%;
-}
+
 
 .variacao-item button {
-  background-color: v-bind(cores(tema, 5)); /* Cor de fundo vermelha */
-  color: v-bind(cores(tema, 0)); /* Cor do texto (o 'X') */
+  background-color: v-bind(cores(tema, 5));
+  /* Cor de fundo vermelha */
+  color: v-bind(cores(tema, 0));
+  /* Cor do texto (o 'X') */
   border: none;
-  border-radius: 50%; /* Deixa o botão redondo */
-  width: 30px; /* Largura fixa */
+  border-radius: 50%;
+  /* Deixa o botão redondo */
+  width: 30px;
+  /* Largura fixa */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   padding: 5px 15px;
-  font-size: 18px; /* Tamanho do 'X' */
-  transition: background-color 0.3s ease; /* Efeito de transição suave na cor de fundo */
+  font-size: 18px;
+  /* Tamanho do 'X' */
+  transition: background-color 0.3s ease;
+  /* Efeito de transição suave na cor de fundo */
   margin-right: 10px;
 }
 
@@ -409,6 +420,7 @@ select {
   align-items: center;
   margin-top: 20px;
 }
+
 .form-close-save button {
   color: v-bind(cores(tema, 20));
   background-color: v-bind(cores(tema, 4));
@@ -417,15 +429,18 @@ select {
   border-radius: 30px;
   cursor: pointer;
   transition: background-color 0.3s, border-color 0.3s;
-  box-sizing: border-box; /* Garante que a borda fique dentro do botão */
+  box-sizing: border-box;
+  /* Garante que a borda fique dentro do botão */
 }
 
 .form-close-save button:hover {
   cursor: pointer;
   background-color: v-bind(cores(tema, 0));
   color: v-bind(cores(tema, 4));
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307); /* Sombra no texto */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307);
+  /* Sombra no texto */
 }
+
 @media (max-width: 600px) {
   .variacao-item input {
     width: 100%;

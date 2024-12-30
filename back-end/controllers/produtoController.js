@@ -77,3 +77,13 @@ exports.removerProduto = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.verificaRef = async (req, res) => {
+    const ref = req.params.ref;
+    try{
+        const produto = await Produto.findOne({ ref }); 
+        res.json({ existe: !!produto }); // Retorna true se o produto existir, caso contrário false
+    }catch(error){
+        res.status(500).json({message: erro.message})
+    }
+}
