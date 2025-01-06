@@ -30,3 +30,5 @@ Siga as instruções abaixo para configurar o projeto em sua máquina local:
 
 3. **Inicie o software localmente:**
    Feito isso, basta dar npm run dev para o back-end e npm run serve para o front-end :)
+
+**OBS: Sem o arquivo .env o programa não irá funcionar. Desta forma, o projeto final que será distribuído aqui utilizará armazenamento local dos dados**
