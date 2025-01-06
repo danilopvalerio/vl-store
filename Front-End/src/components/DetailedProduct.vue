@@ -8,7 +8,12 @@
     />
     <div v-if="!mostrarEditar" class="sub-container-det">
       <div class="text-block">
-        <h2>{{ produto.titulo + ' - ' + produto.genero }}</h2>
+        <h2 v-if="produto.genero !== 'nenhum'">
+          {{ produto.titulo + " - " + produto.genero }}
+        </h2>
+        <h2 v-else>
+          {{ produto.titulo + " - " + produto.genero }}
+        </h2>
       </div>
       <div class="main-data-group">
         <label>Categoria: {{ produto.categoria }}</label>
@@ -21,14 +26,13 @@
       </div>
       <div class="variacao-container-det">
         <div
-          v-for="(variacao, index) in produto.variacoes"
+          v-for="(item, index) in produto.variacoes"
           :key="index"
           class="variacao-item"
         >
-          <label>Cor: {{ variacao.cor }}</label>
-          <label>Tamanho: {{ variacao.tamanho }}</label>
-          <label>Quantidade: {{ variacao.quantidade }}</label>
-          <label>Valor: {{ variacao.valor }}</label>
+          <label>Variação: {{ item.variacao }}</label>
+          <label>Quantidade: {{ item.quantidade }}</label>
+          <label>Valor: {{ item.valor }}</label>
         </div>
       </div>
       <footer>
@@ -39,84 +43,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import axios from "axios";
-import { corSelect } from "@/controllers/themeController";
-import ProductForm from "./ProductForm.vue";
-
-export default {
-  name: "DetailedProduct",
-  data() {
-    return {
-      showEditar: false,
-      tema: this.temaNum,
-      mostrarEditar: false,
-    };
-  },
-  props: {
-    produto: {
-      type: Object,
-      required: true,
-      default: () => ({
-        ref: "",
-        titulo: "",
-        categoria: "",
-        material: "",
-        genero: "",
-        variacoes: [],
-      }),
-    },
-    temaNum: {
-      type: Number,
-      required: true,
-    },
-  },
-  methods: {
-    fecharJanela() {
-      // Lógica para fechar a janela ou realizar outra ação
-      console.log("Janela fechada");
-    },
-    async deletarProduto() {
-      try {
-        const response = await axios.delete(
-          `http://localhost:5000/api/produtos/${this.produto._id}`
-        );
-        console.log("Produto deletado com sucesso:", response.data);
-        this.$emit("produto-deletado");
-        this.$emit("fechar");
-      } catch (error) {
-        console.error(
-          "Erro ao deletar o produto:",
-          error.response || error.message
-        );
-        alert("Erro ao deletar o produto. Tente novamente.");
-      }
-    },
-    cores(tema, cor) {
-      return corSelect(tema, cor);
-    },
-    fecharEditar() {
-      this.mostrarEditar = false;
-    },
-    exibirEditar() {
-      this.mostrarEditar = true;
-    },
-  },
-  computed: {
-    contaTotal() {
-      // Soma as quantidades de todas as variações
-      return this.produto.variacoes.reduce(
-        (total, variacao) => total + variacao.quantidade,
-        0
-      );
-    },
-  },
-  components: {
-    ProductForm,
-  },
-};
-</script>
 
 <style scoped>
 * {
@@ -254,3 +180,84 @@ footer button:hover {
   box-shadow: 2px 2px 4px v-bind(cores(tema, 17)); /* Sombra no texto */
 }
 </style>
+
+<script>
+import { ref, computed } from "vue";
+import axios from "axios";
+import { corSelect } from "@/controllers/themeController";
+import ProductForm from "./ProductForm.vue";
+
+export default {
+  name: "DetailedProduct",
+  props: {
+    produto: {
+      type: Object,
+      required: true,
+      default: () => ({
+        ref: "",
+        titulo: "",
+        categoria: "",
+        material: "",
+        genero: "",
+        variacoes: [],
+      }),
+    },
+    temaNum: {
+      type: Number,
+      required: true,
+    },
+  },
+  setup(props, { emit }) {
+    const tema = ref(props.temaNum);
+    const mostrarEditar = ref(false);
+
+    const cores = (tema, cor) => {
+      return corSelect(tema, cor);
+    };
+    const fecharEditar = () => {
+      mostrarEditar.value = false;
+    };
+
+    const exibirEditar = () => {
+      mostrarEditar.value = true;
+    };
+
+    const deletarProduto = async () => {
+      try {
+        const response = await axios.delete(
+          `http://localhost:5000/api/produtos/${props.produto._id}`
+        );
+        console.log("Produto deletado com sucesso:", response.data);
+        emit("produto-deletado");
+        emit("fechar");
+      } catch (error) {
+        console.error(
+          "Erro ao deletar o produto:",
+          error.response || error.message
+        );
+        alert("Erro ao deletar o produto. Tente novamente.");
+      }
+    };
+
+    const contaTotal = computed(() => {
+      return props.produto.variacoes.reduce(
+        (total, variacao) => total + variacao.quantidade,
+        0
+      );
+    });
+
+    return {
+      tema,
+      mostrarEditar,
+      fecharEditar,
+      exibirEditar,
+      deletarProduto,
+      contaTotal,
+      cores,
+    };
+  },
+  components: {
+    ProductForm,
+  },
+};
+</script>

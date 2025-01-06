@@ -1,11 +1,8 @@
 const mongoose = require("mongoose");
 
 const variacaoSchema = new mongoose.Schema({
-  cor: {
-    type: String,
-    required: true,
-  },
-  tamanho: {
+  
+  variacao: {
     type: String,
     required: true,
   },

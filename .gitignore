@@ -13,6 +13,3 @@ build/
 
 # Ignore package-lock.json 
 package-lock.json
-
-# Vue.js specific
-public/

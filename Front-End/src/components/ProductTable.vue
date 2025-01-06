@@ -5,8 +5,8 @@
         <thead>
           <tr>
             <th class="size1">Título</th>
-            <th class="size2">Material</th>
             <th class="size2">Categoria</th>
+            <th class="size2">Material</th>
           </tr>
         </thead>
         <tbody>
@@ -45,7 +45,6 @@
 </template>
 
 <style scoped>
-
 .table-pagination-container {
   width: 100%;
   height: 50%;
@@ -211,26 +210,34 @@ export default {
       return Math.ceil(produtos.value.length / itensPorPagina.value);
     });
 
-    const produtosPaginados = computed(() => {
+    const produtosFiltrados = computed(() => {
+      let produtosFiltrados = produtos.value;
+
+      // Filtra os produtos se houver um termo de pesquisa
+      if (pesquisaSubmit.value) {
+        const termoPesquisa = pesquisaSubmit.value.toLowerCase();
+        produtosFiltrados = produtosFiltrados.filter((produto) => {
+          // Verificando se o termo de pesquisa está no título, categoria ou material
+          const correspondeEmCamposPrincipais =
+            produto.titulo?.toLowerCase().includes(termoPesquisa) ||
+            produto.categoria?.toLowerCase().includes(termoPesquisa) ||
+            produto.material?.toLowerCase().includes(termoPesquisa);
+
+          const correspondeEmVariações = produto.variacoes?.some((variacao) => {
+            // Criando uma string que combina os campos relevantes das variações
+            const variacaoString = `${variacao.variacao} ${variacao.quantidade} ${variacao.valor}`;
+            return variacaoString.toLowerCase().includes(termoPesquisa);
+          });
+          // Retorna true se algum dos campos principais ou das variações corresponder ao termo de pesquisa
+          return correspondeEmCamposPrincipais || correspondeEmVariações;
+        });
+      }
+
+      // Aplica a paginação nos produtos filtrados
       const inicio = (paginaAtual.value - 1) * itensPorPagina.value;
       const fim = inicio + itensPorPagina.value;
-      return produtos.value.slice(inicio, fim);
-    });
 
-    const produtosFiltrados = computed(() => {
-      if (!pesquisaSubmit.value) {
-        return produtosPaginados.value;
-      }
-      const termoPesquisa = pesquisaSubmit.value.toLowerCase();
-      return produtos.value.filter((produto) => {
-        return (
-          produto.titulo?.toLowerCase().includes(termoPesquisa) ||
-          produto.categoria?.toLowerCase().includes(termoPesquisa) ||
-          produto.material?.toLowerCase().includes(termoPesquisa) ||
-          produto.cor_variacao?.toLowerCase().includes(termoPesquisa) ||
-          produto.tamanho?.toLowerCase().includes(termoPesquisa)
-        );
-      });
+      return produtosFiltrados.slice(inicio, fim);
     });
 
     // Lifecycle hooks
@@ -247,7 +254,6 @@ export default {
       produtoSelecionado,
       tema,
       totalPaginas,
-      produtosPaginados,
       produtosFiltrados,
       cores,
       mudarPagina,

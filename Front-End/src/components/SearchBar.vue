@@ -63,34 +63,39 @@
 </style>
 
 <script>
+import { ref } from "vue";
 import { corSelect } from "./../controllers/themeController.js";
 
 export default {
   name: "BarraPesquisa",
-  data() {
-    return {
-      pesquisa: "",
-      tema: this.temaNum,
-    };
-  },
-  methods: {
-    pesquisarProduto() {
-      this.$emit("pesquisar", this.pesquisa);
-    },
-
-    limparPesquisa() {
-      this.pesquisa = "";
-      this.$emit("limparPesquisa");
-    },
-    cores(tema, cor) {
-      return corSelect(tema, cor);
-    },
-  },
   props: {
     temaNum: {
       type: Number,
       required: true,
     },
+  },
+  setup(props, { emit }) {
+    const pesquisa = ref("");
+    const tema = ref(props.temaNum);
+
+    const pesquisarProduto = () => {
+      emit("pesquisar", pesquisa.value);
+    };
+
+    const limparPesquisa = () => {
+      pesquisa.value = "";
+      emit("limparPesquisa");
+    };
+
+    const cores = (tema, cor) => corSelect(tema, cor);
+
+    return {
+      pesquisa,
+      tema,
+      pesquisarProduto,
+      limparPesquisa,
+      cores,
+    };
   },
 };
 </script>

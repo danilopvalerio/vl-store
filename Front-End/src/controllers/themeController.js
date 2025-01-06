@@ -4,15 +4,15 @@ const cores = [
     "rgb(245, 250, 255)", //fundo geral
     "rgb(238, 250, 255)", //fundo da barra de pesquisa
     "rgb(0, 0, 0)", //H1 da tela principal e textos dos detalhes
-    "rgb(26, 44, 79)", //Botões tela principal e cor do texto das linhas tabela
-    "rgb(26, 44, 79)", //fundo dos headers e footes todos da tela principal
+    "rgb(18, 60, 145)", //Botões tela principal e cor do texto das linhas tabela
+    "rgb(18, 60, 145)", //fundo dos headers e footes todos da tela principal
     "rgb(255, 0, 0)", //fundo do botão de X
-    "rgb(26, 44, 79)", //fundo da linha das colunas
+    "rgb(4, 45, 126)", //fundo da linha das colunas
     "rgb(0, 0, 0)", //h1 e h2 das subjanelas
     "rgba(255, 255, 255, 0.46)", //Fundo de adicionar, editar e exibir produto
     "rgb(255, 255, 255)", //cor do texto dos botões da tela inicial
     "rgb(222, 240, 255)", //Fundo das linhas da tabela menos da linha de coluna
-    "rgb(0, 17, 41)", //Fundo ao passar o mouse nas linhas da tabela
+    "rgb(18, 60, 145)", //Fundo ao passar o mouse nas linhas da tabela
     "rgb(189, 189, 189)", //Borda da barra de pesquisa
     "rgb(189, 189, 189)", //Borda dos inputs de adicionar/editar produto
     "rgb(255, 255, 255)", //Cor do texto das colunas

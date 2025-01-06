@@ -1,0 +1,249 @@
+[
+  {
+    "ref": "1001",
+    "titulo": "Camiseta Básica",
+    "categoria": "Vestuário",
+    "material": "Algodão",
+    "genero": "unissex",
+    "variacoes": [
+      { "variacao": "Azul P", "quantidade": 50, "valor": 19.9 },
+      { "variacao": "Preto M", "quantidade": 60, "valor": 19.9 },
+      { "variacao": "Branco G", "quantidade": 40, "valor": 19.9 }
+    ]
+  },
+  {
+    "ref": "1002",
+    "titulo": "Calça Jeans",
+    "categoria": "Vestuário",
+    "material": "Jeans",
+    "genero": "feminino",
+    "variacoes": [
+      { "variacao": "Azul 36", "quantidade": 30, "valor": 89.9 },
+      { "variacao": "Preto 38", "quantidade": 20, "valor": 89.9 },
+      { "variacao": "Cinza 40", "quantidade": 25, "valor": 89.9 }
+    ]
+  },
+  {
+    "ref": "1003",
+    "titulo": "Tênis Esportivo",
+    "categoria": "Calçados",
+    "material": "Sintético",
+    "genero": "masculino",
+    "variacoes": [
+      { "variacao": "Preto 39", "quantidade": 15, "valor": 149.9 },
+      { "variacao": "Branco 40", "quantidade": 20, "valor": 149.9 },
+      { "variacao": "Azul 41", "quantidade": 18, "valor": 149.9 }
+    ]
+  },
+  {
+    "ref": "1004",
+    "titulo": "Bolsa de Couro",
+    "categoria": "Acessórios",
+    "material": "Couro",
+    "genero": "feminino",
+    "variacoes": [
+      { "variacao": "Marrom Único", "quantidade": 10, "valor": 199.9 }
+    ]
+  },
+  {
+    "ref": "1005",
+    "titulo": "Relógio Digital",
+    "categoria": "Acessórios",
+    "material": "Metal",
+    "genero": "unissex",
+    "variacoes": [
+      { "variacao": "Preto", "quantidade": 25, "valor": 299.9 },
+      { "variacao": "Prata", "quantidade": 30, "valor": 299.9 }
+    ]
+  },
+  {
+    "ref": "1006",
+    "titulo": "Camisa Social",
+    "categoria": "Vestuário",
+    "material": "Poliéster",
+    "genero": "masculino",
+    "variacoes": [
+      { "variacao": "Branco M", "quantidade": 20, "valor": 59.9 },
+      { "variacao": "Preto G", "quantidade": 15, "valor": 59.9 },
+      { "variacao": "Azul GG", "quantidade": 10, "valor": 59.9 }
+    ]
+  },
+  {
+    "ref": "1007",
+    "titulo": "Short Esportivo",
+    "categoria": "Vestuário",
+    "material": "Poliéster",
+    "genero": "unissex",
+    "variacoes": [
+      { "variacao": "Cinza P", "quantidade": 40, "valor": 29.9 },
+      { "variacao": "Preto M", "quantidade": 35, "valor": 29.9 },
+      { "variacao": "Azul G", "quantidade": 30, "valor": 29.9 }
+    ]
+  },
+  {
+    "ref": "1008",
+    "titulo": "Meias Longas",
+    "categoria": "Vestuário",
+    "material": "Algodão",
+    "genero": "unissex",
+    "variacoes": [
+      { "variacao": "Branco Único", "quantidade": 100, "valor": 9.9 }
+    ]
+  },
+  {
+    "ref": "1009",
+    "titulo": "Jaqueta de Couro",
+    "categoria": "Vestuário",
+    "material": "Couro Sintético",
+    "genero": "masculino",
+    "variacoes": [
+      { "variacao": "Preto M", "quantidade": 15, "valor": 249.9 },
+      { "variacao": "Marrom G", "quantidade": 10, "valor": 249.9 }
+    ]
+  },
+  {
+    "ref": "1010",
+    "titulo": "Blusa de Moletom",
+    "categoria": "Vestuário",
+    "material": "Algodão",
+    "genero": "unissex",
+    "variacoes": [
+      { "variacao": "Cinza P", "quantidade": 30, "valor": 89.9 },
+      { "variacao": "Preto M", "quantidade": 25, "valor": 89.9 },
+      { "variacao": "Azul G", "quantidade": 20, "valor": 89.9 }
+    ]
+  },
+  {
+    "ref": "1011",
+    "titulo": "Bermuda Jeans",
+    "categoria": "Vestuário",
+    "material": "Jeans",
+    "genero": "masculino",
+    "variacoes": [
+      { "variacao": "Azul 38", "quantidade": 25, "valor": 69.9 },
+      { "variacao": "Preto 40", "quantidade": 30, "valor": 69.9 },
+      { "variacao": "Cinza 42", "quantidade": 20, "valor": 69.9 }
+    ]
+  },
+  {
+    "ref": "1012",
+    "titulo": "Boné Snapback",
+    "categoria": "Acessórios",
+    "material": "Poliéster",
+    "genero": "unissex",
+    "variacoes": [
+      { "variacao": "Preto Preto", "quantidade": 40, "valor": 29.9 },
+      { "variacao": "Branco Branco", "quantidade": 30, "valor": 29.9 }
+    ]
+  },
+  {
+    "ref": "1013",
+    "titulo": "Luvas de Inverno",
+    "categoria": "Acessórios",
+    "material": "Lã",
+    "genero": "unissex",
+    "variacoes": [
+      { "variacao": "Preto P", "quantidade": 15, "valor": 19.9 },
+      { "variacao": "Cinza M", "quantidade": 20, "valor": 19.9 },
+      { "variacao": "Azul G", "quantidade": 10, "valor": 19.9 }
+    ]
+  },
+  {
+    "ref": "1014",
+    "titulo": "Cinto de Couro",
+    "categoria": "Acessórios",
+    "material": "Couro",
+    "genero": "masculino",
+    "variacoes": [
+      { "variacao": "Preto Único", "quantidade": 50, "valor": 49.9 }
+    ]
+  },
+  {
+    "ref": "1015",
+    "titulo": "Saia Plissada",
+    "categoria": "Vestuário",
+    "material": "Poliéster",
+    "genero": "feminino",
+    "variacoes": [
+      { "variacao": "Preto P", "quantidade": 20, "valor": 59.9 },
+      { "variacao": "Azul M", "quantidade": 15, "valor": 59.9 }
+    ]
+  },
+  {
+    "ref": "1016",
+    "titulo": "Chinelo de Borracha",
+    "categoria": "Calçados",
+    "material": "Borracha",
+    "genero": "unissex",
+    "variacoes": [
+      { "variacao": "Preto 39", "quantidade": 25, "valor": 19.9 },
+      { "variacao": "Branco 40", "quantidade": 30, "valor": 19.9 }
+    ]
+  },
+  {
+    "ref": "1017",
+    "titulo": "Casaco de Lã",
+    "categoria": "Vestuário",
+    "material": "Lã",
+    "genero": "feminino",
+    "variacoes": [
+      { "variacao": "Preto M", "quantidade": 10, "valor": 159.9 },
+      { "variacao": "Cinza G", "quantidade": 15, "valor": 159.9 }
+    ]
+  },
+  {
+    "ref": "1018",
+    "titulo": "Sandália Rasteirinha",
+    "categoria": "Calçados",
+    "material": "Sintético",
+    "genero": "feminino",
+    "variacoes": [
+      { "variacao": "Preto 37", "quantidade": 20, "valor": 49.9 },
+      { "variacao": "Bege 38", "quantidade": 15, "valor": 49.9 }
+    ]
+  },
+  {
+    "ref": "1019",
+    "titulo": "Camisa Polo",
+    "categoria": "Vestuário",
+    "material": "Algodão",
+    "genero": "masculino",
+    "variacoes": [
+      { "variacao": "Preto M", "quantidade": 25, "valor": 79.9 },
+      { "variacao": "Azul G", "quantidade": 20, "valor": 79.9 }
+    ]
+  },
+  {
+    "ref": "1020",
+    "titulo": "Vestido Casual",
+    "categoria": "Vestuário",
+    "material": "Poliéster",
+    "genero": "feminino",
+    "variacoes": [
+      { "variacao": "Preto P", "quantidade": 10, "valor": 129.9 },
+      { "variacao": "Cinza M", "quantidade": 15, "valor": 129.9 }
+    ]
+  },
+  {
+    "ref": "1021",
+    "titulo": "Sapato Social",
+    "categoria": "Calçados",
+    "material": "Couro",
+    "genero": "masculino",
+    "variacoes": [
+      { "variacao": "Preto 40", "quantidade": 12, "valor": 199.9 },
+      { "variacao": "Marrom 41", "quantidade": 10, "valor": 199.9 }
+    ]
+  },
+  {
+    "ref": "1022",
+    "titulo": "Bota Feminina",
+    "categoria": "Calçados",
+    "material": "Couro Sintético",
+    "genero": "feminino",
+    "variacoes": [
+      { "variacao": "Preto 38", "quantidade": 8, "valor": 249.9 },
+      { "variacao": "Marrom 39", "quantidade": 12, "valor": 249.9 }
+    ]
+  }
+]

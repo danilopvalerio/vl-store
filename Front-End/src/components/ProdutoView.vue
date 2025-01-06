@@ -2,6 +2,7 @@
   <div class="container">
     <HeaderPanel :temaNum="tema" />
     <h1>Produtos</h1>
+
     <div
       class="overlay"
       v-if="exibirFormulario || exibicaoDetalhada"
@@ -68,6 +69,7 @@ h1 {
 </style>
 
 <script>
+import { ref, defineComponent } from "vue";
 import ProductForm from "./ProductForm.vue";
 import ProductTable from "./ProductTable.vue";
 import SearchBar from "./SearchBar.vue";
@@ -76,56 +78,8 @@ import HeaderPanel from "./common/HeaderPanel.vue";
 import DetailedProduct from "./DetailedProduct.vue";
 import FooterPanel from "./common/FooterPanel.vue";
 
-export default {
+export default defineComponent({
   name: "ProdutoTable",
-  data() {
-    return {
-      tema: this.temaNum,
-      produtos: [],
-      paginaAtual: 1,
-      itensPorPagina: 5,
-      pesquisa: "",
-      pesquisaSubmit: "",
-      exibirFormulario: false,
-      exibicaoDetalhada: false,
-      produtoSelecionado: null,
-    };
-  },
-  methods: {
-    cores(tema, cor) {
-      return corSelect(tema, cor);
-    },
-    mudarPagina(pagina) {
-      if (pagina >= 1 && pagina <= this.totalPaginas) {
-        this.paginaAtual = pagina;
-      }
-    },
-    pesquisarProduto(e) {
-      this.$refs.productTable.pesquisarProduto(e);
-    },
-    limparPesquisa() {
-      this.$refs.productTable.limparPesquisa();
-    },
-    atualizarTabela() {
-      this.$refs.productTable.atualizar();
-    },
-    fecharPopUp() {
-      this.mostrarFormulario();
-    },
-    abrirDetalhes(produto) {
-      this.produtoSelecionado = produto;
-      this.exibicaoDetalhada = true;
-    },
-    fecharJanelas() {
-      this.exibicaoDetalhada = false;
-      this.exibirFormulario = false;
-      this.produtoSelecionado = null;
-    },
-    mostrarFormulario() {
-      this.exibicaoDetalhada = false;
-      this.exibirFormulario = true;
-    },
-  },
   components: {
     ProductForm,
     ProductTable,
@@ -140,5 +94,81 @@ export default {
       required: true,
     },
   },
-};
+  setup(props) {
+    const tema = ref(props.temaNum);
+    const produtos = ref([]);
+    const paginaAtual = ref(1);
+    const itensPorPagina = ref(5);
+    const pesquisa = ref("");
+    const pesquisaSubmit = ref("");
+    const exibirFormulario = ref(false);
+    const exibicaoDetalhada = ref(false);
+    const produtoSelecionado = ref(null);
+
+    const productTable = ref(null);
+    const detailedProduct = ref(null);
+
+    const cores = (tema, cor) => {
+      return corSelect(tema, cor);
+    };
+
+    const pesquisarProduto = (e) => {
+      if (productTable.value) {
+        productTable.value.pesquisarProduto(e);
+      }
+    };
+
+    const limparPesquisa = () => {
+      if (productTable.value) {
+        productTable.value.limparPesquisa();
+      }
+    };
+
+    const atualizarTabela = () => {
+      if (productTable.value) {
+        productTable.value.atualizar();
+      }
+    };
+
+    const abrirDetalhes = (produto) => {
+      produtoSelecionado.value = produto;
+      exibicaoDetalhada.value = true;
+    };
+
+    const fecharJanelas = () => {
+      exibicaoDetalhada.value = false;
+      exibirFormulario.value = false;
+      produtoSelecionado.value = null;
+      atualizarTabela();
+    };
+
+    const mostrarFormulario = () => {
+      exibicaoDetalhada.value = false;
+      exibirFormulario.value = true;
+    };
+
+    return {
+      tema,
+      produtos,
+      paginaAtual,
+      itensPorPagina,
+      pesquisa,
+      pesquisaSubmit,
+      exibirFormulario,
+      exibicaoDetalhada,
+      produtoSelecionado,
+      cores,
+      pesquisarProduto,
+      limparPesquisa,
+      atualizarTabela,
+      abrirDetalhes,
+      fecharJanelas,
+      mostrarFormulario,
+
+      // Ref's dos componentes
+      productTable,
+      detailedProduct,
+    };
+  },
+});
 </script>

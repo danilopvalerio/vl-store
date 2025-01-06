@@ -5,29 +5,57 @@
     </div>
     <form>
       <div class="form-group">
-        <label>Título:</label>
-        <input v-model="produto.titulo" type="text" name="titulo" required placeholder="Digite o título..." />
+        <label for="titulo">Título:</label>
+        <input
+          id="titulo"
+          v-model="produto.titulo"
+          type="text"
+          name="titulo"
+          required
+          placeholder="Digite o título..."
+        />
       </div>
 
       <div class="form-group">
-        <label>Categoria:</label>
-        <input v-model="produto.categoria" type="text" name="categoria" required placeholder="Digite a categoria..." />
-
+        <label for="categoria">Categoria:</label>
+        <input
+          id="categoria"
+          v-model="produto.categoria"
+          type="text"
+          name="categoria"
+          required
+          placeholder="Digite a categoria..."
+        />
       </div>
 
       <div class="form-group">
-        <label>Material:</label>
-        <input v-model="produto.material" type="text" name="material" required placeholder="Digite o material..." />
+        <label for="material">Material:</label>
+        <input
+          id="material"
+          v-model="produto.material"
+          type="text"
+          name="material"
+          required
+          placeholder="Digite o material..."
+        />
       </div>
       <div class="form-group">
         <label>Referência:</label>
         <label id="referencia">{{ produto.ref }}</label>
 
         <label id="genero">Gênero:</label>
-        <select v-model="produto.genero" class="input-menor" name="genero" required>
+        <select
+          v-model="produto.genero"
+          class="input-menor"
+          name="genero"
+          required
+        >
           <option value="unissex">Unissex</option>
           <option value="masculino">Masculino</option>
           <option value="feminino">Feminino</option>
+          <option value="infantil-masculino">Infantil - Para Meninos</option>
+          <option value="infantil-feminino">Infantil - Para Meninas</option>
+          <option value="nenhum">Nenhum</option>
         </select>
       </div>
 
@@ -36,30 +64,58 @@
       </div>
 
       <div class="variacao-container">
-        <div v-for="(variacao, index) in produto.variacoes" :key="index" class="variacao-item">
+        <div
+          v-for="(item, index) in produto.variacoes"
+          :key="index"
+          class="variacao-item"
+        >
           <div class="variacao-item-entry size1">
-            <label for="cor">Cor:</label>
-            <input class="size3" v-model="variacao.cor" type="text" name="cor" required placeholder="Digite a cor..." />
-          </div>
-
-          <div class="variacao-item-entry size3">
-            <label for="tamanho">Tamanho:</label>
-            <input class="size2" v-model="variacao.tamanho" type="text" name="tamanho" required
-              placeholder="Tamanho..." />
+            <label for="variacao">Variacao:</label>
+            <input
+              id="variacao"
+              class="size3"
+              v-model="item.variacao"
+              type="text"
+              name="variacao"
+              required
+              placeholder="Digite a variação, por exemplo: Azul GG"
+            />
           </div>
 
           <div class="variacao-item-entry size2">
             <label for="quantidade">Quantidade</label>
-            <input class="size1" v-model="variacao.quantidade" type="number" name="quantidade" required min="1"
-              placeholder="01" />
+            <input
+              id="quantidade"
+              class="size1"
+              v-model="item.quantidade"
+              type="number"
+              name="quantidade"
+              required
+              min="1"
+              placeholder="01"
+            />
           </div>
 
           <div class="variacao-item-entry size2">
             <label for="valor">Valor</label>
-            <input class="size1" v-model="variacao.valor" type="number" name="valor" required min="1" step="1" />
+            <input
+              id="valor"
+              class="size1"
+              v-model="item.valor"
+              type="number"
+              name="valor"
+              required
+              min="1"
+              step="1"
+              placeholder="00"
+            />
           </div>
 
-          <button :disabled="produto.variacoes.length === 1" type="button" @click="removerVariacao(index)">
+          <button
+            :disabled="produto.variacoes.length === 1"
+            type="button"
+            @click="removerVariacao(index)"
+          >
             X
           </button>
         </div>
@@ -74,38 +130,11 @@
 </template>
 
 <script>
+import { ref, reactive, onMounted } from "vue";
 import { corSelect } from "./../controllers/themeController.js";
 import axios from "axios";
+
 export default {
-  data() {
-    return {
-      tema: this.temaNum,
-      editar: false,
-      produto: {
-        ref: "",
-        titulo: "",
-        categoria: "",
-        material: "",
-        genero: "unissex", // Gênero com valor padrão
-        variacoes: [
-          {
-            cor: "",
-            tamanho: "",
-            quantidade: "",
-            valor: "",
-          },
-        ],
-      },
-    };
-  },
-  created() {
-    if (this.produtoEditar != null) {
-      this.editar = true;
-      this.produto = this.produtoEditar;
-    } else {
-      this.produto.ref = this.gerarReferenciaAleatoria();
-    }
-  },
   props: {
     temaNum: {
       type: Number,
@@ -116,102 +145,143 @@ export default {
       required: false,
     },
   },
-  methods: {
-    adicionarVariacao() {
-      this.produto.variacoes.push({
-        cor: "",
-        tamanho: "",
-        quantidade: 1,
-        valor: 0.01,
-        tema: this.temaNum,
-      });
-    },
-    gerarReferenciaAleatoria() {
-      return Math.floor(100000 + Math.random() * 900000).toString();
-    },
-    async verificarRefExistente(ref) {
+  setup(props, { emit }) {
+    const tema = ref(props.temaNum);
+    const editar = ref(false);
+
+    const produto = reactive({
+      ref: "",
+      titulo: "",
+      categoria: "",
+      material: "",
+      genero: "unissex", // Gênero com valor padrão
+      variacoes: [
+        {
+          cor: "",
+          tamanho: "",
+          quantidade: "",
+          valor: "",
+        },
+      ],
+    });
+
+    // Verificar se existe um produto para edição
+    onMounted(() => {
+      if (props.produtoEditar != null) {
+        editar.value = true;
+        Object.assign(produto, props.produtoEditar);
+      } else {
+        produto.ref = gerarReferenciaAleatoria();
+      }
+    });
+
+    const gerarReferenciaAleatoria = () => {
+      return Math.floor(1000 + Math.random() * 9999).toString();
+    };
+
+    const verificarRefExistente = async (ref) => {
       try {
-        // Substitua a URL pela rota correta do seu backend para verificar as referências
-        const response = await axios.get(`http://localhost:5000/api/produtos/verificarRef/${ref}`);
-        return response.data.existe; // Supondo que a resposta retorna um booleano indicando se a referência existe
+        const response = await axios.get(
+          `http://localhost:5000/api/produtos/verificarRef/${ref}`
+        );
+        return response.data.existe;
       } catch (error) {
         console.error("Erro ao verificar referência:", error);
-        return false; // Em caso de erro, presume-se que a referência não existe
+        return false;
       }
-    },
+    };
 
-    async gerarReferenciaValida() {
+    const gerarReferenciaValida = async () => {
       let refValida = false;
       let novaRef;
 
       while (!refValida) {
-        novaRef = this.gerarReferenciaAleatoria();
-        const existe = await this.verificarRefExistente(novaRef);
+        novaRef = gerarReferenciaAleatoria();
+        const existe = await verificarRefExistente(novaRef);
         if (!existe) {
           refValida = true;
         }
       }
 
-      this.produto.ref = novaRef;
-    },
-    cores(tema, cor) {
+      produto.ref = novaRef;
+    };
+
+    const cores = (tema, cor) => {
       return corSelect(tema, cor);
-    },
-    removerVariacao(index) {
-      this.produto.variacoes.splice(index, 1);
-    },
-    salvarProduto() {
-      if (this.editar) {
-        this.editarProduto();
+    };
+
+    const adicionarVariacao = () => {
+      produto.variacoes.push({
+        variacao: "",
+        quantidade: 1,
+        valor: 0.01,
+        tema: tema.value,
+      });
+    };
+
+    const removerVariacao = (index) => {
+      produto.variacoes.splice(index, 1);
+    };
+
+    const salvarProduto = () => {
+      if (editar.value) {
+        editarProduto();
       } else {
         axios
-          .post("http://localhost:5000/api/produtos/", this.produto)
+          .post("http://localhost:5000/api/produtos/", produto)
           .then((response) => {
-            alert(`Produto criado com sucesso: ${response.data}`);
+            console.log(response);
+            alert(`Produto criado com sucesso.`);
           })
           .catch((error) => {
             alert(`Erro ao criar o produto: ${error}`);
           });
-
-        this.fecharFormulario();
+        fecharFormulario();
       }
-    },
-    editarProduto() {
-      console.log(this.produto._id);
+    };
+
+    const editarProduto = () => {
       axios
-        .put(
-          `http://localhost:5000/api/produtos/${this.produto._id}`,
-          this.produto
-        )
+        .put(`http://localhost:5000/api/produtos/${produto._id}`, produto)
         .then((response) => {
-          alert("Produto editado com sucesso:", response.data);
+          console.log(response);
         })
         .catch((error) => {
           alert("Erro ao editar o produto:", error);
         });
+      fecharFormulario(produto);
+    };
 
-      this.fecharFormulario(this.produto);
-    },
-    fecharFormulario(produtoFinal) {
-      this.limparEntradas();
-      this.$emit("fechar", produtoFinal);
-    },
-    limparEntradas() {
-      this.produto = {
-        titulo: "",
-        categoria: "",
-        material: "",
-        genero: "unissex", // Resetando o valor de gênero
-        variacoes: [
-          {
-            cor: "",
-            tamanho: "",
-            quantidade: "",
-            valor: "",
-          },
-        ],
-      };
-    },
+    const fecharFormulario = (produtoFinal = null) => {
+      limparEntradas();
+      emit("fechar", produtoFinal);
+    };
+
+    const limparEntradas = () => {
+      produto.titulo = "";
+      produto.categoria = "";
+      produto.material = "";
+      produto.genero = "unissex"; // Resetando o valor de gênero
+      produto.variacoes = [
+        {
+          variacao: "",
+          quantidade: "",
+          valor: "",
+        },
+      ];
+    };
+
+    return {
+      tema,
+      produto,
+      editar,
+      adicionarVariacao,
+      gerarReferenciaValida,
+      cores,
+      removerVariacao,
+      salvarProduto,
+      fecharFormulario,
+    };
   },
 };
 </script>
@@ -244,7 +314,8 @@ export default {
 }
 
 input,
-select {
+select,
+#referencia {
   color: v-bind(cores(tema, 2));
 }
 
@@ -293,9 +364,9 @@ select,
   outline: none;
   height: 30px;
   border: none;
-  background-color: v-bind(cores(tema, 1));
+  background-color: v-bind(cores(tema, 8));
   border-radius: 15px;
-  border: 1px solid v-bind(cores(tema, 222));
+  border: 1px solid v-bind(cores(tema, 22));
   padding: 5px 10px;
   box-shadow: 2px 2px 4px v-bind(cores(tema, 22));
 }
@@ -341,6 +412,7 @@ select {
   margin-bottom: 15px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .variacao-item-entry {
@@ -373,15 +445,13 @@ select {
   outline: none;
   height: 30px;
   border: none;
-  background-color: v-bind(cores(tema, 1));
+  background-color: v-bind(cores(tema, 8));
   border-radius: 15px;
   border: 1px solid v-bind(cores(tema, 22));
   padding: 5px;
   box-shadow: 2px 2px 4px v-bind(cores(tema, 22));
   text-align: center;
 }
-
-
 
 .variacao-item button {
   background-color: v-bind(cores(tema, 5));
@@ -403,10 +473,6 @@ select {
   transition: background-color 0.3s ease;
   /* Efeito de transição suave na cor de fundo */
   margin-right: 10px;
-}
-
-.variacao-item button:hover {
-  background-color: v-bind(cores(tema, 4));
 }
 
 .variacao-item button:focus {
