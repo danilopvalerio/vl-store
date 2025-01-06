@@ -2,12 +2,13 @@
   <div class="container">
     <HeaderPanel :temaNum="tema" />
     <h1>Produtos</h1>
-
-    <div
-      class="overlay"
-      v-if="exibirFormulario || exibicaoDetalhada"
-      @click="fecharJanelas"
-    ></div>
+    <transition>
+      <div
+        class="overlay"
+        v-if="exibirFormulario || exibicaoDetalhada"
+        @click="fecharJanelas"
+      ></div>
+    </transition>
     <SearchBar
       :temaNum="tema"
       @pesquisar="pesquisarProduto"
@@ -20,26 +21,39 @@
       :temaNum="tema"
       @exibir-detalhes="abrirDetalhes"
     />
+    <transition>
+      <ProductForm
+        v-if="exibirFormulario"
+        :temaNum="tema"
+        @fechar="fecharJanelas"
+      />
+    </transition>
 
-    <ProductForm
-      v-if="exibirFormulario"
-      :temaNum="tema"
-      @fechar="fecharJanelas"
-    />
-
-    <DetailedProduct
-      ref="detailedProduct"
-      v-if="exibicaoDetalhada"
-      :produto="produtoSelecionado"
-      @fechar="fecharJanelas"
-      :temaNum="tema"
-      @produto-deletado="atualizarTabela"
-    />
+    <transition>
+      <DetailedProduct
+        ref="detailedProduct"
+        v-if="exibicaoDetalhada"
+        :produto="produtoSelecionado"
+        @fechar="fecharJanelas"
+        :temaNum="tema"
+        @produto-deletado="atualizarTabela"
+      />
+    </transition>
     <FooterPanel :paleta="tema" :temaNum="tema" />
   </div>
 </template>
 
 <style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
 .container {
   background-color: v-bind(cores(tema, 0));
   display: flex;

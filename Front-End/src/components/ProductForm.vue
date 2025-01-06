@@ -64,61 +64,63 @@
       </div>
 
       <div class="variacao-container">
-        <div
-          v-for="(item, index) in produto.variacoes"
-          :key="index"
-          class="variacao-item"
-        >
-          <div class="variacao-item-entry size1">
-            <label for="variacao">Variacao:</label>
-            <input
-              id="variacao"
-              class="size3"
-              v-model="item.variacao"
-              type="text"
-              name="variacao"
-              required
-              placeholder="Digite a variação, por exemplo: Azul GG"
-            />
-          </div>
-
-          <div class="variacao-item-entry size2">
-            <label for="quantidade">Quantidade</label>
-            <input
-              id="quantidade"
-              class="size1"
-              v-model="item.quantidade"
-              type="number"
-              name="quantidade"
-              required
-              min="1"
-              placeholder="01"
-            />
-          </div>
-
-          <div class="variacao-item-entry size2">
-            <label for="valor">Valor</label>
-            <input
-              id="valor"
-              class="size1"
-              v-model="item.valor"
-              type="number"
-              name="valor"
-              required
-              min="1"
-              step="1"
-              placeholder="00"
-            />
-          </div>
-
-          <button
-            :disabled="produto.variacoes.length === 1"
-            type="button"
-            @click="removerVariacao(index)"
+        <transition-group>
+          <div
+            v-for="(item, index) in produto.variacoes"
+            :key="index"
+            class="variacao-item"
           >
-            X
-          </button>
-        </div>
+            <div class="variacao-item-entry size1">
+              <label for="variacao">Variacao:</label>
+              <input
+                id="variacao"
+                class="size3"
+                v-model="item.variacao"
+                type="text"
+                name="variacao"
+                required
+                placeholder="Digite a variação, por exemplo: Azul GG"
+              />
+            </div>
+
+            <div class="variacao-item-entry size2">
+              <label for="quantidade">Quantidade</label>
+              <input
+                id="quantidade"
+                class="size1"
+                v-model="item.quantidade"
+                type="number"
+                name="quantidade"
+                required
+                min="1"
+                placeholder="01"
+              />
+            </div>
+
+            <div class="variacao-item-entry size2">
+              <label for="valor">Valor</label>
+              <input
+                id="valor"
+                class="size1"
+                v-model="item.valor"
+                type="number"
+                name="valor"
+                required
+                min="1"
+                step="1"
+                placeholder="00"
+              />
+            </div>
+
+            <button
+              :disabled="produto.variacoes.length === 1"
+              type="button"
+              @click="removerVariacao(index)"
+            >
+              X
+            </button>
+          </div>
+        </transition-group>
       </div>
     </form>
     <div class="form-close-save">
@@ -290,7 +292,16 @@ export default {
 * {
   box-sizing: border-box;
 }
+.v-enter-active,
+.v-leave-active {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
 
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
 .form-container {
   position: fixed;
   top: 50%;

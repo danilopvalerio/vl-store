@@ -1,11 +1,14 @@
 <template>
   <div class="container-det">
-    <ProductForm
-      v-if="mostrarEditar"
-      :produtoEditar="produto"
-      :temaNum="tema"
-      @fechar="fecharEditar"
-    />
+    <transition>
+      <ProductForm
+        v-if="mostrarEditar"
+        :produtoEditar="produto"
+        :temaNum="tema"
+        @fechar="fecharEditar"
+      />
+    </transition>
+
     <div v-if="!mostrarEditar" class="sub-container-det">
       <div class="text-block">
         <h2 v-if="produto.genero !== 'nenhum'">
@@ -49,6 +52,16 @@
   box-sizing: border-box;
   font-family: "Montserrat", sans-serif;
   text-shadow: none;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 /* container-det principal */
 .container-det {
