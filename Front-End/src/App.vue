@@ -1,6 +1,7 @@
 <template>
   <div class="dd">
-    <ProdutoView :key="tema" :temaNum="tema" />
+    <!-- <LoginPage/> -->
+    <ProdutoView :temaNum="tema" />
     <button class="theme-button" @click="trocarTema">Trocar tema</button>
   </div>
 </template>
@@ -24,34 +25,44 @@
   border-radius: 15px;
   cursor: pointer;
   font-size: 10px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
-.theme-button:hover{
+.theme-button:hover {
   background-color: rgb(240, 240, 240);
 }
 </style>
 
 <script>
+import { ref, provide } from "vue";
 import { corSelect } from "./controllers/themeController";
+// import LoginPage from "./components/LoginPage.vue";
 import ProdutoView from "./components/ProdutoView.vue";
+
 export default {
   name: "App",
   components: {
+    // LoginPage,
     ProdutoView,
   },
-  data() {
-    return {
-      tema: 0,
-      totalTemas: 2, // Total de temas disponíveis
+  setup() {
+    const tema = ref(0);
+
+    const trocarTema = () => {
+      tema.value = (tema.value + 1) % 2; // Alternar entre 0 e 1
     };
-  },
-  methods: {
-    trocarTema() {
-      this.tema = (this.tema + 1) % this.totalTemas;
-    },
-  },
-  cores(tema, cor) {
-    return corSelect(tema, cor);
+
+    const cores = (tema, cor) => {
+      return corSelect(tema, cor);
+    };
+
+    // Prover o valor de tema globalmente
+    provide("tema", tema);
+
+    return {
+      tema,
+      trocarTema,
+      cores,
+    };
   },
 };
 </script>

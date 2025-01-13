@@ -30,15 +30,16 @@
   height: 100%;
   padding: 5px;
   border-radius: 30px;
-  background-color: v-bind(cores(tema, 1));
-  color: v-bind(cores(tema, 2));
-  border: 1px solid v-bind(cores(tema, 12));
+  background-color: v-bind(cores(1));
+  color: v-bind(cores(2));
+  border: 1px solid v-bind(cores(13));
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307);
 }
 
 .barra-pesquisa:focus {
-  border-color: v-bind(cores(tema, 4));
+  border-color: v-bind(cores(4));
   outline: none;
-  background-color: v-bind(cores(tema, 1));
+  background-color: v-bind(cores(1));
 }
 
 .btn {
@@ -51,32 +52,35 @@
   border-radius: 30px;
   cursor: pointer;
   transition: background-color 0.3s;
-  background-color: v-bind(cores(tema, 3));
-  color: v-bind(cores(tema, 9));
+  background-color: v-bind(cores(3));
+  color: v-bind(cores(9));
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.307);
 }
 
 .btn:hover {
-  background-color: v-bind(cores(tema, 21));
-  color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(21));
+  color: v-bind(cores(4));
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307); /* Sombra no texto */
 }
 </style>
 
 <script>
-import { ref } from "vue";
+import { ref, inject, watch } from "vue";
 import { corSelect } from "./../controllers/themeController.js";
 
 export default {
   name: "BarraPesquisa",
-  props: {
-    temaNum: {
-      type: Number,
-      required: true,
-    },
-  },
   setup(props, { emit }) {
     const pesquisa = ref("");
-    const tema = ref(props.temaNum);
+
+    const tema = inject("tema");
+
+    watch(tema, (novoTema) => {
+      tema.value = novoTema;
+    });
+
+    // Métodos
+    const cores = (cor) => corSelect(tema.value, cor);
 
     const pesquisarProduto = () => {
       emit("pesquisar", pesquisa.value);
@@ -86,8 +90,6 @@ export default {
       pesquisa.value = "";
       emit("limparPesquisa");
     };
-
-    const cores = (tema, cor) => corSelect(tema, cor);
 
     return {
       pesquisa,

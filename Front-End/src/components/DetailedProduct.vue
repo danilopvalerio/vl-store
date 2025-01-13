@@ -81,11 +81,11 @@
   align-items: center;
 }
 .sub-container-det {
-  background-color: v-bind(cores(tema, 8));
+  background-color: v-bind(cores(8));
   backdrop-filter: blur(15px);
-  box-shadow: 0 4px 15px v-bind(cores(tema, 17));
+  box-shadow: 0 4px 15px v-bind(cores(17));
   border-radius: 40px 40px 10px 10px;
-  color: v-bind(cores(tema, 2));
+  color: v-bind(cores(2));
   width: 100%;
   height: 100%;
   display: flex;
@@ -99,11 +99,11 @@ h2,
 h3 {
   width: auto;
   font-size: 19px;
-  color: v-bind(cores(tema, 7));
+  color: v-bind(cores(7));
   text-align: center;
 }
 header {
-  background-color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(4));
   width: 100%;
   height: 50px;
   border-radius: 40px 40px 0px 0px;
@@ -116,7 +116,7 @@ header {
 .main-data-group label,
 .variacao-item label {
   font-size: 15px;
-  color: v-bind(cores(tema, 2));
+  color: v-bind(cores(2));
   display: block;
   margin: 5px 0;
 }
@@ -126,9 +126,9 @@ header {
   margin: 20px 0px 2p;
   width: 90%;
   padding: 20px;
-  background-color: v-bind(cores(tema, 18));
+  background-color: v-bind(cores(18));
   border-radius: 8px;
-  box-shadow: 0 4px 10px v-bind(cores(tema, 17));
+  box-shadow: 0 4px 10px v-bind(cores(17));
   margin-bottom: 20px;
 }
 .variacao-container-det {
@@ -143,11 +143,11 @@ header {
 
 .variacao-container-det::-webkit-scrollbar {
   width: 10px;
-  background-color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(4));
   border-radius: 10px;
 }
 .variacao-container-det::-webkit-scrollbar-thumb {
-  background-color: v-bind(cores(tema, 0));
+  background-color: v-bind(cores(0));
   border-radius: 10px;
   width: 15px;
 }
@@ -158,14 +158,14 @@ header {
   flex-direction: column;
   justify-content: center;
   align-items: left;
-  background-color: v-bind(cores(tema, 18));
+  background-color: v-bind(cores(18));
   height: 120px;
   border-radius: 15px;
-  box-shadow: 2px 2px 4px v-bind(cores(tema, 17));
+  box-shadow: 2px 2px 4px v-bind(cores(17));
 }
 
 .variacao-item:hover {
-  background-color: v-bind(cores(tema, 19));
+  background-color: v-bind(cores(19));
 }
 
 footer {
@@ -176,9 +176,9 @@ footer {
   margin: 10px;
 }
 footer button {
-  color: v-bind(cores(tema, 20));
+  color: v-bind(cores(20));
   height: 40px;
-  background-color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(4));
   padding: 10px 20px;
   border: none;
   border-radius: 30px;
@@ -188,14 +188,14 @@ footer button {
 }
 footer button:hover {
   cursor: pointer;
-  background-color: v-bind(cores(tema, 9));
-  color: v-bind(cores(tema, 4));
-  box-shadow: 2px 2px 4px v-bind(cores(tema, 17)); /* Sombra no texto */
+  background-color: v-bind(cores(9));
+  color: v-bind(cores(4));
+  box-shadow: 2px 2px 4px v-bind(cores(17)); /* Sombra no texto */
 }
 </style>
 
 <script>
-import { ref, computed } from "vue";
+import { ref, computed, watch, inject } from "vue";
 import axios from "axios";
 import { corSelect } from "@/controllers/themeController";
 import ProductForm from "./ProductForm.vue";
@@ -215,18 +215,19 @@ export default {
         variacoes: [],
       }),
     },
-    temaNum: {
-      type: Number,
-      required: true,
-    },
   },
   setup(props, { emit }) {
-    const tema = ref(props.temaNum);
     const mostrarEditar = ref(false);
 
-    const cores = (tema, cor) => {
-      return corSelect(tema, cor);
-    };
+    const tema = inject("tema");
+
+    watch(tema, (novoTema) => {
+      tema.value = novoTema;
+    });
+
+    // Métodos
+    const cores = (cor) => corSelect(tema.value, cor);
+
     const fecharEditar = () => {
       mostrarEditar.value = false;
     };

@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, inject, watch, onMounted } from "vue";
 import { corSelect } from "./../controllers/themeController.js";
 import axios from "axios";
 
@@ -148,8 +148,12 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const tema = ref(props.temaNum);
+    const tema = inject("tema");
     const editar = ref(false);
+
+    watch(tema, (novoTema) => {
+      tema.value = novoTema; // Atualiza a variável de tema quando a prop mudar
+    });
 
     const produto = reactive({
       ref: "",
@@ -208,8 +212,8 @@ export default {
       produto.ref = novaRef;
     };
 
-    const cores = (tema, cor) => {
-      return corSelect(tema, cor);
+    const cores = (cor) => {
+      return corSelect(tema.value, cor);
     };
 
     const adicionarVariacao = () => {
@@ -308,15 +312,15 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
-  color: v-bind(cores(tema, 2));
+  color: v-bind(cores(2));
   height: 580px;
   width: 100%;
   max-width: 700px;
   padding: 0px 0px 5px 0px;
-  background-color: v-bind(cores(tema, 8));
+  background-color: v-bind(cores(8));
   backdrop-filter: blur(15px);
   border-radius: 40px 40px 10px 10px;
-  box-shadow: 0 4px 15px v-bind(cores(tema, 17));
+  box-shadow: 0 4px 15px v-bind(cores(17));
 
   display: flex;
   flex-direction: column;
@@ -327,7 +331,7 @@ export default {
 input,
 select,
 #referencia {
-  color: v-bind(cores(tema, 2));
+  color: v-bind(cores(2));
 }
 
 form {
@@ -344,7 +348,7 @@ form {
 h2,
 h3 {
   font-size: 18px;
-  color: v-bind(cores(tema, 2));
+  color: v-bind(cores(2));
   text-align: center;
 }
 
@@ -375,11 +379,11 @@ select,
   outline: none;
   height: 30px;
   border: none;
-  background-color: v-bind(cores(tema, 8));
+  background-color: v-bind(cores(8));
   border-radius: 15px;
-  border: 1px solid v-bind(cores(tema, 22));
+  border: 1px solid v-bind(cores(22));
   padding: 5px 10px;
-  box-shadow: 2px 2px 4px v-bind(cores(tema, 22));
+  box-shadow: 2px 2px 4px v-bind(cores(22));
 }
 
 .form-group input {
@@ -403,7 +407,7 @@ select {
   width: 100%;
   height: 250px;
   overflow-y: scroll;
-  border: 1px solid v-bind(cores(tema, 13));
+  border: 1px solid v-bind(cores(13));
   border-radius: 4px;
 }
 
@@ -456,18 +460,18 @@ select {
   outline: none;
   height: 30px;
   border: none;
-  background-color: v-bind(cores(tema, 8));
+  background-color: v-bind(cores(8));
   border-radius: 15px;
-  border: 1px solid v-bind(cores(tema, 22));
+  border: 1px solid v-bind(cores(22));
   padding: 5px;
-  box-shadow: 2px 2px 4px v-bind(cores(tema, 22));
+  box-shadow: 2px 2px 4px v-bind(cores(22));
   text-align: center;
 }
 
 .variacao-item button {
-  background-color: v-bind(cores(tema, 5));
+  background-color: v-bind(cores(5));
   /* Cor de fundo vermelha */
-  color: v-bind(cores(tema, 0));
+  color: v-bind(cores(0));
   /* Cor do texto (o 'X') */
   border: none;
   border-radius: 50%;
@@ -499,8 +503,8 @@ select {
 }
 
 .form-close-save button {
-  color: v-bind(cores(tema, 20));
-  background-color: v-bind(cores(tema, 4));
+  color: v-bind(cores(20));
+  background-color: v-bind(cores(4));
   padding: 10px 20px;
   border: none;
   border-radius: 30px;
@@ -512,8 +516,8 @@ select {
 
 .form-close-save button:hover {
   cursor: pointer;
-  background-color: v-bind(cores(tema, 0));
-  color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(0));
+  color: v-bind(cores(4));
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307);
   /* Sombra no texto */
 }

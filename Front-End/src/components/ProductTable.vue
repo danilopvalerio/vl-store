@@ -1,7 +1,7 @@
 <template>
   <div class="table-pagination-container">
     <div class="table-wrapper">
-      <table id="responsive-table">
+      <table id="responsive-table" v-if="produtos.length > 0">
         <thead>
           <tr>
             <th class="size1">Título</th>
@@ -11,7 +11,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="produto in produtosFiltrados"
+            v-for="produto in produtos"
             :key="produto._id"
             class="linha"
             @click="exibirDetalhes(produto)"
@@ -22,6 +22,7 @@
           </tr>
         </tbody>
       </table>
+      <div id="no-product-message" v-else>Sem produtos para exibir.</div>
     </div>
     Páginação
     <div class="pagination">
@@ -44,6 +45,129 @@
   </div>
 </template>
 
+<script>
+import { ref, inject, watch, onMounted } from "vue";
+import axios from "axios";
+import { corSelect } from "./../controllers/themeController.js";
+
+export default {
+  name: "ProdutoTable",
+  setup(props, { emit }) {
+    // States reativos
+    const produtos = ref([]);
+    const paginaAtual = ref(1);
+    const itensPorPagina = ref(5);
+    const produtoSelecionado = ref(null);
+    const totalProdutos = ref(0);
+    const totalPaginas = ref(0); // Número total de páginas
+    const pesquisaProduto = ref(null);
+
+    const tema = inject("tema");
+
+    watch(tema, (novoTema) => {
+      tema.value = novoTema;
+    });
+
+    // Métodos
+    const cores = (cor) => corSelect(tema.value, cor);
+
+    const mudarPagina = async (pagina) => {
+      if (pagina >= 1 && pagina <= totalPaginas.value) {
+        paginaAtual.value = pagina;
+
+        if (pesquisaProduto.value != null) {
+          await pesquisarProduto(pesquisaProduto.value); // Realiza a pesquisa ao mudar de página
+        } else {
+          await obterProdutos(); // Se não houver pesquisa, apenas exibe os produtos
+        }
+      }
+    };
+
+    const atualizar = async () => {
+      paginaAtual.value = 1;
+    };
+
+    const exibirDetalhes = (produto) => {
+      emit("exibir-detalhes", produto);
+    };
+
+    const obterProdutos = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/produtos/?page=${paginaAtual.value}`
+        );
+        produtos.value = response.data;
+      } catch (error) {
+        alert("Erro ao carregar produtos, tente novamente mais tarde.");
+      }
+    };
+
+    const obterTotalProdutos = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/produtos/contar`
+        );
+        totalProdutos.value = response.data.total;
+        totalPaginas.value = Math.ceil(
+          totalProdutos.value / itensPorPagina.value
+        ); // Calculando o total de páginas, aqui erredondei para cima.
+      } catch (error) {
+        console.log("Erro ao obter o total de produtos.");
+      }
+    };
+
+    const limparPesquisa = async () => {
+      pesquisaProduto.value = null; // Limpa o campo de pesquisa
+      mudarPagina(1);
+      await obterTotalProdutos(); // Atualiza o total de produtos
+      await obterProdutos(); // Exibe todos os produtos novamente
+    };
+
+    const pesquisarProduto = async (pesquisa) => {
+      if (pesquisa.length >= 3) {
+        // Só faz a busca se tiver 3 ou mais caracteres
+        pesquisaProduto.value = pesquisa;
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/api/produtos/search/${pesquisa}?page=${paginaAtual.value}&limit=${itensPorPagina.value}`
+          );
+          produtos.value = response.data.produtos;
+          totalProdutos.value = response.data.totalProdutos;
+          totalPaginas.value = response.data.totalPaginas; // Atualiza o total de páginas
+        } catch (error) {
+          produtos.value = [];
+          console.error("Erro ao buscar produtos:", error.message);
+        }
+      } else {
+        produtos.value = []; // Limpa os resultados caso a pesquisa tenha menos de 3 caracteres
+      }
+    };
+
+    // Lifecycle hooks
+    onMounted(() => {
+      obterProdutos();
+      obterTotalProdutos();
+    });
+
+    return {
+      produtos,
+      paginaAtual,
+      itensPorPagina,
+      produtoSelecionado,
+      tema,
+      totalProdutos,
+      totalPaginas,
+      cores,
+      mudarPagina,
+      exibirDetalhes,
+      atualizar,
+      pesquisarProduto,
+      limparPesquisa,
+    };
+  },
+};
+</script>
+
 <style scoped>
 .table-pagination-container {
   width: 100%;
@@ -52,10 +176,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: v-bind(cores(tema, 3));
+  color: v-bind(cores(2));
 }
 .table-wrapper {
-  background-color: v-bind(cores(tema, 0));
+  background-color: v-bind(cores(0));
   margin: 0 auto;
   height: 280px;
   width: 90%;
@@ -85,26 +209,31 @@ td {
 .size2 {
   width: 20%;
 }
+#no-product-message {
+  width: 100%;
+  color: v-bind(cores(2));
+  text-align: center;
+}
 
 th {
   border-radius: 40px;
-  background-color: v-bind(cores(tema, 6));
-  color: v-bind(cores(tema, 14));
+  background-color: v-bind(cores(6));
+  color: v-bind(cores(14));
 }
 
 th:hover {
-  background-color: v-bind(cores(tema, 11));
-  color: v-bind(cores(tema, 0));
+  background-color: v-bind(cores(11));
+  color: v-bind(cores(0));
 }
 
 .linha {
-  background-color: v-bind(cores(tema, 10));
-  color: v-bind(cores(tema, 15));
+  background-color: v-bind(cores(10));
+  color: v-bind(cores(15));
 }
 
 .linha:hover {
-  background-color: v-bind(cores(tema, 11));
-  color: v-bind(cores(tema, 0));
+  background-color: v-bind(cores(11));
+  color: v-bind(cores(0));
   cursor: pointer;
 }
 
@@ -115,7 +244,7 @@ th:hover {
   margin-top: 20px;
 }
 #pagination-num {
-  color: v-bind(cores(tema, 3));
+  color: v-bind(cores(2));
   text-align: center;
   margin: 8px;
 }
@@ -130,138 +259,13 @@ th:hover {
   cursor: pointer;
   transition: background-color 0.3s;
   font-size: 13;
-  background-color: v-bind(cores(tema, 3));
-  color: v-bind(cores(tema, 9));
+  background-color: v-bind(cores(3));
+  color: v-bind(cores(9));
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307);
 }
 
 .pagination button:hover {
-  background-color: v-bind(cores(tema, 21));
-  color: v-bind(cores(tema, 4));
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.307); /* Sombra no texto */
+  background-color: v-bind(cores(21));
+  color: v-bind(cores(4));
 }
 </style>
-
-<script>
-import { ref, computed, onMounted } from "vue";
-import axios from "axios";
-import { corSelect } from "./../controllers/themeController.js";
-
-export default {
-  name: "ProdutoTable",
-  props: {
-    temaNum: {
-      type: Number,
-      required: true,
-    },
-  },
-  setup(props, { emit }) {
-    // States reativos
-    const produtos = ref([]);
-    const paginaAtual = ref(1);
-    const itensPorPagina = ref(5);
-    const pesquisa = ref("");
-    const pesquisaSubmit = ref("");
-    const produtoSelecionado = ref(null);
-    const tema = ref(props.temaNum);
-
-    // Métodos
-    const cores = (tema, cor) => corSelect(tema, cor);
-
-    const mudarPagina = (pagina) => {
-      if (pagina >= 1 && pagina <= totalPaginas.value) {
-        paginaAtual.value = pagina;
-      }
-    };
-
-    const pesquisarProduto = (e) => {
-      pesquisaSubmit.value = e;
-      paginaAtual.value = 1; // Resetar para a primeira página ao pesquisar
-    };
-
-    const limparPesquisa = () => {
-      pesquisa.value = "";
-      pesquisaSubmit.value = "";
-      paginaAtual.value = 1; // Retornar à primeira página
-    };
-
-    const exibirDetalhes = (produto) => {
-      emit("exibir-detalhes", produto);
-    };
-
-    const obterProdutos = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/produtos");
-        produtos.value = response.data;
-      } catch (error) {
-        console.error("Erro ao obter produtos:", error);
-      }
-    };
-
-    const atualizar = () => {
-      produtos.value = [];
-      pesquisa.value = "";
-      pesquisaSubmit.value = "";
-      paginaAtual.value = 1;
-      obterProdutos();
-    };
-
-    // Computed properties
-    const totalPaginas = computed(() => {
-      return Math.ceil(produtos.value.length / itensPorPagina.value);
-    });
-
-    const produtosFiltrados = computed(() => {
-      let produtosFiltrados = produtos.value;
-
-      // Filtra os produtos se houver um termo de pesquisa
-      if (pesquisaSubmit.value) {
-        const termoPesquisa = pesquisaSubmit.value.toLowerCase();
-        produtosFiltrados = produtosFiltrados.filter((produto) => {
-          // Verificando se o termo de pesquisa está no título, categoria ou material
-          const correspondeEmCamposPrincipais =
-            produto.titulo?.toLowerCase().includes(termoPesquisa) ||
-            produto.categoria?.toLowerCase().includes(termoPesquisa) ||
-            produto.material?.toLowerCase().includes(termoPesquisa);
-
-          const correspondeEmVariações = produto.variacoes?.some((variacao) => {
-            // Criando uma string que combina os campos relevantes das variações
-            const variacaoString = `${variacao.variacao} ${variacao.quantidade} ${variacao.valor}`;
-            return variacaoString.toLowerCase().includes(termoPesquisa);
-          });
-          // Retorna true se algum dos campos principais ou das variações corresponder ao termo de pesquisa
-          return correspondeEmCamposPrincipais || correspondeEmVariações;
-        });
-      }
-
-      // Aplica a paginação nos produtos filtrados
-      const inicio = (paginaAtual.value - 1) * itensPorPagina.value;
-      const fim = inicio + itensPorPagina.value;
-
-      return produtosFiltrados.slice(inicio, fim);
-    });
-
-    // Lifecycle hooks
-    onMounted(() => {
-      obterProdutos();
-    });
-
-    return {
-      produtos,
-      paginaAtual,
-      itensPorPagina,
-      pesquisa,
-      pesquisaSubmit,
-      produtoSelecionado,
-      tema,
-      totalPaginas,
-      produtosFiltrados,
-      cores,
-      mudarPagina,
-      pesquisarProduto,
-      limparPesquisa,
-      exibirDetalhes,
-      atualizar,
-    };
-  },
-};
-</script>

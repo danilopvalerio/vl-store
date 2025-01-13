@@ -6,7 +6,7 @@
 
 <style scoped>
 .footerPanel {
-  background-color: v-bind(cores(tema, 4));
+  background-color: v-bind(cores(4));
   box-sizing: border-box;
   width: 100%;
   height: 55px; /* Altura fixa do painel */
@@ -24,35 +24,36 @@ button {
   cursor: pointer;
   transition: background-color 0.3s;
   font-size: 13;
-  background-color: v-bind(cores(tema, 0));
-  color: v-bind(cores(tema, 3));
+  background-color: v-bind(cores(20));
+  color: v-bind(cores(4));
 }
 
 button:hover {
-    background-color: v-bind(cores(tema,8));
-    color: v-bind(cores(tema,0));
-    
+  background-color: v-bind(cores(4));
+  color: v-bind(cores(21));
 }
 </style>
 
 <script>
+import { watch, inject } from "vue";
 import { corSelect } from "./../../controllers/themeController.js";
 export default {
-  props: {
-    temaNum: {
-      type: Number,
-      required: true,
-    },
-  },
-  data() {
+  setup() {
+    const tema = inject("tema");
+
+    watch(tema, (novoTema) => {
+      tema.value = novoTema;
+    });
+
+    // Métodos
+    const cores = (cor) => corSelect(tema.value, cor);
+
+    // Observar mudanças no valor de temaNum e atualizar o tema
+
     return {
-      tema: this.temaNum,
+      tema,
+      cores,
     };
-  },
-  methods: {
-    cores(tema, cor) {
-      return corSelect(tema, cor);
-    },
   },
 };
 </script>

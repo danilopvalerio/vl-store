@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const variacaoSchema = new mongoose.Schema({
-  
   variacao: {
     type: String,
     required: true,
@@ -22,6 +21,12 @@ const produtoSchema = new mongoose.Schema({
   ref: {
     type: String,
     required: true,
+  },
+  userRef: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Usuario",
+    required: true,
+    index: true,
   },
   titulo: {
     type: String,
