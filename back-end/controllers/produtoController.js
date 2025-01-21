@@ -1,4 +1,51 @@
 const Produto = require("../models/produtoModel");
+const APIFeatures = require("../utils/apiFeatures");
+
+exports.lerProdutos = async (req, res) => {
+  const plano = await Produto.aggregate([
+    { $unwind: "$variacoes" }, // Desmonta as variações para cada produto
+    {
+      $group: {
+        _id: "$ref", // Agrupa por produto (ref)
+        totalEstoque: { $sum: "$variacoes.quantidade" }, // Soma as quantidades das variações
+      },
+    },
+    {
+      $group: {
+        _id: null, // Agrupa por produto (ref)
+        total: { $sum: "$totalEstoque" }, // Soma as quantidades das variações
+      },
+    },
+  ]);
+
+  console.log(`Total de produtos no estoque:`, plano);
+
+  try {
+    // Executa a query
+    // Produto.find() vai criar a consulta base, e o find no filtro
+    // vai refinar a consulta já existente.
+    const features = new APIFeatures(Produto.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .pagination();
+
+    // Aqui a consulta é finalmente executada.
+    const produtos = await features.query;
+
+    // Verifica se existem produtos para a página solicitada
+    if (produtos.length === 0) {
+      return res.status(404).json({
+        message: "Nenhum produto encontrado para esta página.",
+        pagina: page,
+      });
+    }
+
+    res.status(200).json(produtos);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 exports.searchProdutos = async (req, res) => {
   try {
@@ -63,66 +110,6 @@ exports.searchProdutos = async (req, res) => {
       totalProdutos,
       totalPaginas: Math.ceil(totalProdutos / limit), // Calcula o total de páginas
     });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-exports.lerProdutos = async (req, res) => {
-  try {
-    // Filtramos a query caso necessário.
-    const queryObj = { ...req.query };
-    const excludedFields = ["page", "sort", "limit", "fields"];
-    excludedFields.forEach((el) => delete queryObj[el]);
-
-    // Filtragem avançada
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(
-      /\b(gte|gt|lte|lt)\b/g,
-      (correspondencia) => `$${correspondencia}`
-    );
-
-    // Fazemos a leitura.
-    let produtos = Produto.find(JSON.parse(queryStr));
-
-    //Fazemos a ordenação caso a propriedade exista
-    if (req.query.sort) {
-      let ordenacao = req.query.sort.startsWith("-")
-        ? req.query.sort.slice(1)
-        : req.query.sort;
-      produtos = produtos.sort({
-        [ordenacao]: ordenacao.startsWith("-") ? -1 : 1,
-      });
-    } else {
-      produtos = produtos.sort({ titulo: 1 });
-    }
-
-    // Tratamento caso haja campos a serem filtrados
-    if (req.query.fields) {
-      const fields = req.query.fields.split(",").join(" ");
-      produtos = produtos.select(fields);
-    } else {
-      produtos = produtos.select("-__v");
-    }
-
-    // Paginação
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 5;
-    const skip = (page - 1) * limit;
-    produtos = produtos.skip(skip).limit(limit);
-
-    // Executa a query
-    produtos = await produtos;
-
-    // Verifica se existem produtos para a página solicitada
-    if (produtos.length === 0) {
-      return res.status(404).json({
-        message: "Nenhum produto encontrado para esta página.",
-        pagina: page,
-      });
-    }
-
-    res.status(200).json(produtos);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -83,7 +83,9 @@ export default {
     const cores = (cor) => corSelect(tema.value, cor);
 
     const pesquisarProduto = () => {
-      emit("pesquisar", pesquisa.value);
+      if (pesquisa.value.length > 3) {
+        emit("pesquisar", pesquisa.value);
+      }
     };
 
     const limparPesquisa = () => {

@@ -34,11 +34,7 @@
         Anterior
       </button>
       <span id="pagination-num">{{ paginaAtual }}</span>
-      <button
-        @click="mudarPagina(paginaAtual + 1)"
-        :disabled="paginaAtual === totalPaginas"
-        class="btn-paginacao"
-      >
+      <button @click="mudarPagina(paginaAtual + 1)" class="btn-paginacao">
         Próxima
       </button>
     </div>
@@ -75,7 +71,7 @@ export default {
       if (pagina >= 1 && pagina <= totalPaginas.value) {
         paginaAtual.value = pagina;
 
-        if (pesquisaProduto.value != null) {
+        if (pesquisaProduto.value) {
           await pesquisarProduto(pesquisaProduto.value); // Realiza a pesquisa ao mudar de página
         } else {
           await obterProdutos(); // Se não houver pesquisa, apenas exibe os produtos
@@ -98,7 +94,7 @@ export default {
         );
         produtos.value = response.data;
       } catch (error) {
-        alert("Erro ao carregar produtos, tente novamente mais tarde.");
+        alert(`Erro ao carregar produtos, tente novamente mais tarde.`);
       }
     };
 
@@ -110,7 +106,7 @@ export default {
         totalProdutos.value = response.data.total;
         totalPaginas.value = Math.ceil(
           totalProdutos.value / itensPorPagina.value
-        ); // Calculando o total de páginas, aqui erredondei para cima.
+        ); // Calculando o total de páginas, aqui erredondei para cima com a função ceil.
       } catch (error) {
         console.log("Erro ao obter o total de produtos.");
       }
@@ -125,7 +121,6 @@ export default {
 
     const pesquisarProduto = async (pesquisa) => {
       if (pesquisa.length >= 3) {
-        // Só faz a busca se tiver 3 ou mais caracteres
         pesquisaProduto.value = pesquisa;
         try {
           const response = await axios.get(
@@ -133,17 +128,16 @@ export default {
           );
           produtos.value = response.data.produtos;
           totalProdutos.value = response.data.totalProdutos;
-          totalPaginas.value = response.data.totalPaginas; // Atualiza o total de páginas
+          totalPaginas.value = response.data.totalPaginas;
         } catch (error) {
-          produtos.value = [];
+          produtos.value = "";
           console.error("Erro ao buscar produtos:", error.message);
         }
       } else {
-        produtos.value = []; // Limpa os resultados caso a pesquisa tenha menos de 3 caracteres
+        produtos.value = "";
       }
     };
 
-    // Lifecycle hooks
     onMounted(() => {
       obterProdutos();
       obterTotalProdutos();
