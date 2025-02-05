@@ -33,7 +33,7 @@
       >
         Anterior
       </button>
-      <span id="pagination-num">{{ paginaAtual }}</span>
+      <span id="pagination-num">{{ paginaAtual }} - {{ totalPaginas }}</span>
       <button @click="mudarPagina(paginaAtual + 1)" class="btn-paginacao">
         Próxima
       </button>
