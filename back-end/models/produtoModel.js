@@ -25,7 +25,7 @@ const produtoSchema = new mongoose.Schema({
   userRef: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Usuario",
-    required: true,
+    required: false,
     index: true,
   },
   titulo: {
