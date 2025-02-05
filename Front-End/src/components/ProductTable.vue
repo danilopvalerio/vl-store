@@ -120,6 +120,7 @@ export default {
     };
 
     const pesquisarProduto = async (pesquisa) => {
+      await limparPesquisa();
       if (pesquisa.length >= 3) {
         pesquisaProduto.value = pesquisa;
         try {
