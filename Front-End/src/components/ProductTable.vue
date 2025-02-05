@@ -90,7 +90,7 @@ export default {
     const obterProdutos = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/produtos/?page=${paginaAtual.value}`
+          `https://vl-store.onrender.com/api/produtos/?page=${paginaAtual.value}`
         );
         produtos.value = response.data;
       } catch (error) {
@@ -101,7 +101,7 @@ export default {
     const obterTotalProdutos = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/produtos/contar`
+          `https://vl-store.onrender.com/api/produtos/contar`
         );
         totalProdutos.value = response.data.total;
         totalPaginas.value = Math.ceil(
@@ -124,7 +124,7 @@ export default {
         pesquisaProduto.value = pesquisa;
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/produtos/search/${pesquisa}?page=${paginaAtual.value}&limit=${itensPorPagina.value}`
+            `https://vl-store.onrender.com/api/produtos/search/${pesquisa}?page=${paginaAtual.value}&limit=${itensPorPagina.value}`
           );
           produtos.value = response.data.produtos;
           totalProdutos.value = response.data.totalProdutos;

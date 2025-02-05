@@ -239,7 +239,7 @@ export default {
     const deletarProduto = async () => {
       try {
         const response = await axios.delete(
-          `http://localhost:5000/api/produtos/${props.produto._id}`
+          `https://vl-store.onrender.com/api/produtos/${props.produto._id}`
         );
         console.log("Produto deletado com sucesso:", response.data);
         emit("produto-deletado");

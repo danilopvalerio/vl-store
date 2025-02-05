@@ -188,7 +188,7 @@ export default {
     const verificarRefExistente = async (ref) => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/produtos/verificarRef/${ref}`
+          `https://vl-store.onrender.com/api/produtos/verificarRef/${ref}`
         );
         return response.data.existe;
       } catch (error) {
@@ -234,7 +234,7 @@ export default {
         editarProduto();
       } else {
         axios
-          .post("http://localhost:5000/api/produtos/", produto)
+          .post("https://vl-store.onrender.com/api/produtos/", produto)
           .then((response) => {
             console.log(response);
             alert(`Produto criado com sucesso.`);
@@ -248,7 +248,10 @@ export default {
 
     const editarProduto = () => {
       axios
-        .put(`http://localhost:5000/api/produtos/${produto._id}`, produto)
+        .put(
+          `https://vl-store.onrender.com/api/produtos/${produto._id}`,
+          produto
+        )
         .then((response) => {
           console.log(response);
         })
