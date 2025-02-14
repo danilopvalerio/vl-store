@@ -30,14 +30,14 @@
         @produto-deletado="atualizarTabela"
       />
     </transition>
-    <FooterPanel />
+    <FooterPanel @voltarAoLogin="voltarAoLogin" />
   </div>
 </template>
 
 <style scoped>
 .v-enter-active,
 .v-leave-active {
-  transition: transform 0.5s ease, opacity 0.5s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .v-enter-from,
@@ -76,13 +76,15 @@ h1 {
 
 <script>
 import { ref, defineComponent, inject, watch } from "vue";
-import ProductForm from "./ProductForm.vue";
-import ProductTable from "./ProductTable.vue";
-import SearchBar from "./SearchBar.vue";
-import { corSelect } from "./../controllers/themeController.js";
-import HeaderPanel from "./common/HeaderPanel.vue";
-import DetailedProduct from "./DetailedProduct.vue";
-import FooterPanel from "./common/FooterPanel.vue";
+
+import ProductForm from "../components/ProductForm.vue";
+import ProductTable from "../components/ProductTable.vue";
+import SearchBar from "../components/SearchBar.vue";
+import { corSelect } from "../controllers/themeController.js";
+import HeaderPanel from "../components/common/HeaderPanel.vue";
+import DetailedProduct from "../components/DetailedProduct.vue";
+import FooterPanel from "../components/common/FooterPanel.vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "ProdutoTable",
@@ -103,7 +105,7 @@ export default defineComponent({
     const exibirFormulario = ref(false);
     const exibicaoDetalhada = ref(false);
     const produtoSelecionado = ref(null);
-
+    const router = useRouter();
     const productTable = ref(null);
     const detailedProduct = ref(null);
 
@@ -150,6 +152,10 @@ export default defineComponent({
       exibirFormulario.value = true;
     };
 
+    const voltarAoLogin = () => {
+      router.push("/");
+    };
+
     return {
       tema,
       produtos,
@@ -167,6 +173,7 @@ export default defineComponent({
       abrirDetalhes,
       fecharJanelas,
       mostrarFormulario,
+      voltarAoLogin,
 
       // Ref's dos componentes
       productTable,

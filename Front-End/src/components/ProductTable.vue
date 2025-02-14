@@ -80,6 +80,7 @@ export default {
     };
 
     const atualizar = async () => {
+      obterProdutos();
       paginaAtual.value = 1;
     };
 

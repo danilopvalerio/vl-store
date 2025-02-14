@@ -1,7 +1,6 @@
 <template>
-  <div class="dd">
-    <!-- <LoginPage/> -->
-    <ProdutoView :temaNum="tema" />
+  <div>
+    <router-view></router-view>
     <button class="theme-button" @click="trocarTema">Trocar tema</button>
   </div>
 </template>
@@ -35,15 +34,15 @@
 <script>
 import { ref, provide } from "vue";
 import { corSelect } from "./controllers/themeController";
-// import LoginPage from "./components/LoginPage.vue";
-import ProdutoView from "./components/ProdutoView.vue";
+
+// import ProdutoView from "./components/ProdutoView.vue";
 
 export default {
   name: "App",
-  components: {
-    // LoginPage,
-    ProdutoView,
-  },
+  // components: {
+  //   LoginPage,
+  //   // ProdutoView,
+  // },
   setup() {
     const tema = ref(0);
 

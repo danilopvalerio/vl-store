@@ -11,8 +11,10 @@
         "@vitejs/plugin-vue": "^5.2.1",
         "axios": "^1.7.9",
         "core-js": "^3.8.3",
+        "dotenv": "^16.4.7",
         "produto-app": "file:",
-        "vue": "^3.5.13"
+        "vue": "^3.5.13",
+        "vue-router": "^4.5.0"
     },
     "devDependencies": {
         "@babel/core": "^7.26.0",

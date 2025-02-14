@@ -1,6 +1,6 @@
 <template>
   <div class="footerPanel">
-    <button>Voltar</button>
+    <button @click="$emit('voltarAoLogin')">Sair</button>
   </div>
 </template>
 
