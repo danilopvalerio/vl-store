@@ -1,6 +1,8 @@
 # vl-store
 
 Bem-vindo ao **VL store**, um sistema completo de gestão de produtos, vendas e controle financeiro para comercios.
+Link para acesso como visitante: https://vl-store-2346.vercel.app/
+Lembrando que como estão sendo utilizadas plataformas gratuitas para a hospedagem, o fluxo de dados é limitado, logo o sistema pode obter um pouco de latência na coleta inicial dos dados.
 
 ## Como instalar
 
